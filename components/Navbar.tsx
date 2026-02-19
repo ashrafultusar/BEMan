@@ -6,13 +6,13 @@ import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 
 
 const NAVIGATION_LINKS = [
-  { name: "NEW DROPS", href: "/" },
-  { name: "SHOP ALL", href: "/" },
-  { name: "Bestsellers", href: "/" },
-  { name: "Shirts", href: "/" },
-  { name: "T-Shirts | POLO", href: "/" },
-  { name: "Jeans", href: "/" },
-  { name: "Trousers", href: "/" },
+  { name: "SHOP ALL", href: "/shop/all" },
+  { name: "Shirts", href: "/shop/shirts" },
+  { name: "Jeans", href: "/shop/jeans" },
+  { name: "Trousers", href: "/shop/trousers" },
+  { name: "Polos", href: "/shop/polos" },
+  { name: "Cargos", href: "/shop/cargos" },
+  { name: "Plus Size", href: "/shop/plus-size" },
 ];
 
 export default function Navbar() {

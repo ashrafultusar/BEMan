@@ -56,8 +56,8 @@ const FeaturedCategories: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {categories.map((category, index) => (
           <Link
-            href={`/shop/${category.title.toLowerCase().replace(" ", "-")}`}
-            key={index}
+          href={`/shop/${category.title.toLowerCase().replace(/\s+/g, "-")}`}
+          key={index}
             className="group block relative overflow-hidden bg-gray-100 aspect-[3/4]"
             title={`Browse our ${category.title} collection`}
           >
