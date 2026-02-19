@@ -6,6 +6,7 @@ import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 
 
 const NAVIGATION_LINKS = [
+  { name: "DASHBOARD", href: "/bemen-staff-portal" },
   { name: "SHOP ALL", href: "/shop/all" },
   { name: "Shirts", href: "/shop/shirts" },
   { name: "Jeans", href: "/shop/jeans" },
