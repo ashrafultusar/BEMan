@@ -6,13 +6,13 @@ import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 
 
 const NAVIGATION_LINKS = [
-  { name: "NEW DROPS", href: "/" },
-  { name: "SHOP ALL", href: "/" },
-  { name: "Bestsellers", href: "/" },
-  { name: "Shirts", href: "/" },
-  { name: "T-Shirts | POLO", href: "/" },
-  { name: "Jeans", href: "/" },
-  { name: "Trousers", href: "/" },
+  { name: "SHOP ALL", href: "/shop/all" },
+  { name: "Shirts", href: "/shop/shirts" },
+  { name: "Jeans", href: "/shop/jeans" },
+  { name: "Trousers", href: "/shop/trousers" },
+  { name: "Polos", href: "/shop/polos" },
+  { name: "Cargos", href: "/shop/cargos" },
+  { name: "Plus Size", href: "/shop/plus-size" },
 ];
 
 export default function Navbar() {
@@ -37,13 +37,14 @@ export default function Navbar() {
           {/* 2. Center: Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-10 h-10">
-                <Image
-                  src="/assets/logo.jpg" // Image file extension as per your screenshot
-                  alt="Logo"
-                  fill
-                  className="object-contain"
-                />
+              <div className="relative w-10 h-7">
+              <Image
+  src="/assets/logo.jpg"
+  alt="BEMEN Logo"
+  fill
+  priority 
+  sizes="40px" 
+/>
               </div>
               <span className="text-xl font-bold tracking-tighter text-black uppercase font-serif">
                 BEMEN

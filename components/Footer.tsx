@@ -65,7 +65,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white border-t border-gray-100 text-gray-600">
+    <footer className="bg-black text-white border-t border-gray-100 ">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -77,7 +77,7 @@ const Footer = () => {
                 <Image
                   src="/assets/logo.jpg"
                   alt="Bemen Logo"
-                  fill
+                  fill sizes="40px"
                   className="object-contain"
                 />
               </div>
@@ -85,7 +85,7 @@ const Footer = () => {
                 BEMEN
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-sm leading-relaxed ">
               Redefining modern fashion with premium quality and timeless designs. 
               Elevate your wardrobe with Bemen.
             </p>
@@ -94,7 +94,7 @@ const Footer = () => {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="text-gray-400 hover:text-black transition-colors"
+                  className=" hover:text-black transition-colors"
                   aria-label={social.label}
                 >
                   <social.icon size={20} />
@@ -147,9 +147,9 @@ const Footer = () => {
                   href={info.href}
                   className="flex items-start gap-3 group"
                 >
-                  <info.icon size={16} className="text-gray-400 group-hover:text-black mt-0.5" />
+                  <info.icon size={16} className=" group-hover:text-black mt-0.5" />
                   <div>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-black transition-colors">
+                    <p className="text-xs font-medium group-hover:text-black transition-colors">
                       {info.value}
                     </p>
                   </div>
@@ -160,20 +160,13 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-100 py-6">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+    
+       
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest text-center">
             © {new Date().getFullYear()} BEMEN. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex gap-4">
-             {/* Payment Icons placeholder */}
-             <div className="w-8 h-5 bg-gray-100 rounded"></div>
-             <div className="w-8 h-5 bg-gray-100 rounded"></div>
-             <div className="w-8 h-5 bg-gray-100 rounded"></div>
-          </div>
-        </div>
-      </div>
+  
+  
     </footer>
   );
 };
