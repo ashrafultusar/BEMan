@@ -21,7 +21,7 @@ const CraftedSection: React.FC = () => {
 
 
         <Link 
-          href="/collections" 
+          href="/shop/all" 
           className="bg-white px-5 text-black py-3 "
         >
           Explore Collection
