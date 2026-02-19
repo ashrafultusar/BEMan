@@ -19,13 +19,13 @@ import { useState } from "react";
 
 // BEMEN Admin Menu Items
 const mainMenuItems = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
-  { name: "Orders", icon: Truck, href: "/admin/orders" },
-  { name: "Products", icon: ShoppingBag, href: "/admin/products" },
-  { name: "Categories", icon: Layers, href: "/admin/categories" },
-  { name: "Customers", icon: Users, href: "/admin/customers" },
-  { name: "Media Gallery", icon: ImageIcon, href: "/admin/gallery" },
-  { name: "Site Settings", icon: Settings, href: "/admin/settings" },
+
+  { name: "Orders", icon: Truck, href: "/bemen-staff-portal/orders" },
+  { name: "Products", icon: ShoppingBag, href: "/bemen-staff-portal/products" },
+  { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
+  { name: "Customers", icon: Users, href: "/bemen-staff-portal/customers" },
+
+  { name: "Administation", icon: Settings, href: "/bemen-staff-portal/administation" },
 ];
 
 export default function Sidebar() {
