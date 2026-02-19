@@ -1,0 +1,52 @@
+.container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff; /* পিওর হোয়াইট ব্যাকগ্রাউন্ড */
+    overflow: hidden;
+  }
+  
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .logoIcon {
+    width: 100px;
+    height: 100px;
+    position: relative;
+  }
+  
+  .svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .progressPath {
+    /* প্রগ্রেস হওয়ার সময় স্মুথ ট্রানজিশন */
+    transition: stroke-dashoffset 0.1s linear;
+  }
+  
+  .percentage {
+    color: #000000;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    font-weight: 300;
+    opacity: 0.4;
+    text-transform: uppercase;
+  }
+  
+  /* লোডিং শেষ হওয়ার পর হালকা পালস ইফেক্ট */
+  .logoIcon {
+    animation: smoothPulse 2s infinite ease-in-out;
+  }
+  
+  @keyframes smoothPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
