@@ -52,7 +52,7 @@ export default function Sidebar() {
           className="p-2 bg-white/10 rounded-lg"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
         >
-          {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+          {isMobileOpen ? <X size={20} /> : <Menu size={20}  className="cursor-pointer"/>}
         </button>
       </div>
 
@@ -94,8 +94,8 @@ export default function Sidebar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="hidden lg:flex absolute -right-3 top-10
-                bg-white text-black shadow-xl
-                rounded-full p-1 hover:scale-110 transition-transform cursor-pointer border border-gray-200"
+                bg-blue-500 text-black shadow-xl
+                rounded-full p-1 hover:scale-110 transition-transform cursor-pointer "
             >
               {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
             </button>
@@ -156,7 +156,7 @@ export default function Sidebar() {
           <div className="p-4 border-t border-white/5">
              <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
-                    <X size={18} />
+                    <X size={18}  className="cursor-pointer"/>
                 </div>
                 <span className={`text-xs font-bold text-red-500 uppercase tracking-widest ${!isOpen && 'lg:hidden'}`}>
                     Sign Out
