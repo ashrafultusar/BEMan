@@ -1,16 +1,16 @@
 "use client";
-import { 
-  LayoutDashboard, 
-  ShoppingBag, 
-  Users, 
-  Image as ImageIcon, 
-  Settings, 
-  ChevronRight, 
-  ChevronLeft, 
-  Menu, 
-  X, 
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  Users,
+  Image as ImageIcon,
+  Settings,
+  ChevronRight,
+  ChevronLeft,
+  Menu,
+  X,
   Truck,
-  Layers
+  Layers,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,11 +19,15 @@ import { useState } from "react";
 
 // BEMEN Admin Menu Items
 const mainMenuItems = [
-
+  { name: "Dashboard", icon: Truck, href: "/bemen-staff-portal" },
   { name: "Orders", icon: Truck, href: "/bemen-staff-portal/orders" },
   { name: "Products", icon: ShoppingBag, href: "/bemen-staff-portal/products" },
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
-  { name: "Administation", icon: Settings, href: "/bemen-staff-portal/administation" },
+  {
+    name: "Administation",
+    icon: Settings,
+    href: "/bemen-staff-portal/administation",
+  },
 ];
 
 export default function Sidebar() {
@@ -44,13 +48,19 @@ export default function Sidebar() {
               className="object-contain"
             />
           </div>
-          <span className="text-sm font-bold tracking-widest uppercase italic">BEMEN</span>
+          <span className="text-sm font-bold tracking-widest uppercase italic">
+            BEMEN
+          </span>
         </div>
         <button
           className="p-2 bg-white/10 rounded-lg"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
         >
-          {isMobileOpen ? <X size={20} /> : <Menu size={20}  className="cursor-pointer"/>}
+          {isMobileOpen ? (
+            <X size={20} />
+          ) : (
+            <Menu size={20} className="cursor-pointer" />
+          )}
         </button>
       </div>
 
@@ -72,7 +82,7 @@ export default function Sidebar() {
                 src="/assets/logo.jpg"
                 alt="BEMEN Logo"
                 fill
-                className="object-contain invert" 
+                className="object-contain invert"
               />
             </div>
 
@@ -152,14 +162,18 @@ export default function Sidebar() {
 
           {/* ===== FOOTER / PROFILE ===== */}
           <div className="p-4 border-t border-white/5">
-             <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
-                    <X size={18}  className="cursor-pointer"/>
-                </div>
-                <span className={`text-xs font-bold text-red-500 uppercase tracking-widest ${!isOpen && 'lg:hidden'}`}>
-                    Sign Out
-                </span>
-             </button>
+            <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
+                <X size={18} className="cursor-pointer" />
+              </div>
+              <span
+                className={`text-xs font-bold text-red-500 uppercase tracking-widest ${
+                  !isOpen && "lg:hidden"
+                }`}
+              >
+                Sign Out
+              </span>
+            </button>
           </div>
         </div>
       </aside>
