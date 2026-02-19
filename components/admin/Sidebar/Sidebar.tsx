@@ -23,8 +23,6 @@ const mainMenuItems = [
   { name: "Orders", icon: Truck, href: "/bemen-staff-portal/orders" },
   { name: "Products", icon: ShoppingBag, href: "/bemen-staff-portal/products" },
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
-  { name: "Customers", icon: Users, href: "/bemen-staff-portal/customers" },
-
   { name: "Administation", icon: Settings, href: "/bemen-staff-portal/administation" },
 ];
 
