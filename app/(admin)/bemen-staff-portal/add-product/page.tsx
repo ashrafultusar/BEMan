@@ -29,7 +29,7 @@ export default function AddProductPage() {
       <div className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-4">
           <Link
-            href="/admin/products"
+            href="/bemen-staff-portal/products"
             className="p-2 hover:bg-gray-100 rounded-full transition-all border border-gray-100 bg-white shadow-sm"
           >
             <ArrowLeft size={20} className="text-gray-600" />
