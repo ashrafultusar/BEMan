@@ -23,7 +23,7 @@ const HeroSection = () => {
 
           <p className={styles.subtitle}>Timeless Essentials — Spring 2026</p>
 
-          <Link href="/homestay" className={styles.shopButton}>
+          <Link href="/" className="bg-white px-6 py-3 " >
             Shop Now
           </Link>
         </div>
