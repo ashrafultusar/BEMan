@@ -1,10 +1,12 @@
+import FeaturedCategories from '@/components/main/home/FeaturedCategories/FeaturedCategories';
 import HeroSection from '@/components/main/home/heroSection/HeroSection';
-import React from 'react';
+
 
 const Home = () => {
     return (
         <main>
            <HeroSection/>
+           <FeaturedCategories/>
         </main>
     );
 };
