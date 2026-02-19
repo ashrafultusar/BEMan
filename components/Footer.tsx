@@ -77,7 +77,7 @@ const Footer = () => {
                 <Image
                   src="/assets/logo.jpg"
                   alt="Bemen Logo"
-                  fill
+                  fill sizes="40px"
                   className="object-contain"
                 />
               </div>

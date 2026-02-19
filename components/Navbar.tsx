@@ -37,13 +37,14 @@ export default function Navbar() {
           {/* 2. Center: Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-10 h-10">
-                <Image
-                  src="/assets/logo.jpg" // Image file extension as per your screenshot
-                  alt="Logo"
-                  fill
-                  className="object-contain"
-                />
+              <div className="relative w-10 h-7">
+              <Image
+  src="/assets/logo.jpg"
+  alt="BEMEN Logo"
+  fill
+  priority 
+  sizes="40px" 
+/>
               </div>
               <span className="text-xl font-bold tracking-tighter text-black uppercase font-serif">
                 BEMEN
