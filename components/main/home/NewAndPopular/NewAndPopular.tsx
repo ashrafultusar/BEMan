@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ProductCard from "../../ProductCard/ProductCard";
-import { getProducts } from "@/lib/data/product"; // Apnar toiri kora function
+import { getProducts } from "@/lib/data/product"; 
 import { Loader2 } from "lucide-react";
 
 const filterCategories = [
@@ -20,13 +20,18 @@ const NewAndPopular: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // --- Dynamic Data Fetching ---
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       const result = await getProducts();
       if (result.success) {
-        setProducts(result.data);
+        // Data map kore ensure korchi jate _id ebong images property thakei
+        const formattedData = result.data.map((item: any) => ({
+          ...item,
+          _id: item._id?.toString() || String(item.id),
+          images: item.images || (item.image ? [item.image] : [])
+        }));
+        setProducts(formattedData);
       }
       setLoading(false);
     };
@@ -34,7 +39,6 @@ const NewAndPopular: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // --- Filtering Logic ---
   const filteredProducts =
     selectedCategory === "ALL"
       ? products
@@ -64,7 +68,6 @@ const NewAndPopular: React.FC = () => {
         ))}
       </div>
 
-      {/* Loading State */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <Loader2 className="animate-spin text-gray-400" size={32} />
@@ -72,14 +75,12 @@ const NewAndPopular: React.FC = () => {
         </div>
       ) : (
         <>
-          {/* Product Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-10 gap-x-4">
             {filteredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
 
-          {/* Empty State */}
           {filteredProducts.length === 0 && (
             <div className="text-center py-20 border border-dashed border-gray-100 rounded">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">

@@ -37,10 +37,17 @@ export default function CategoryPage() {
         </h1>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+  {displayProducts.map((product) => (
+    <ProductCard 
+      key={product.id} 
+      product={{
+        ...product,
+        _id: product.id.toString(), 
+        images: [product.image],    
+      }} 
+    />
+  ))}
+</div>
 
         {displayProducts.length === 0 && (
           <div className="text-center py-20">
