@@ -5,21 +5,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 
+// Database logic-er sathe mil rekhe Interface update
 interface ProductProps {
   product: {
-    id: number;
+    _id: string; // MongoDB-te _id thake
     name: string;
-    price: string;
-    image: string;
+    price: number | string;
+    images: string[]; // Amra images array use korchi
     category: string;
-    alt: string;
     isNew?: boolean;
   };
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
-  // কমন লিঙ্ক পাথ যাতে ভুল না হয়
-  const productPath = `/productDetails/${product.id}`;
+  // ১. Image Fallback Logic: Jodi images array khali thake
+  const imageSrc = product.images && product.images.length > 0 
+    ? product.images[0] 
+    : "/placeholder-image.jpg"; // Public folder-e ekti default image rakhun
+
+  // ২. Link Path: MongoDB-r _id use kora hoyeche
+  const productPath = `/productDetails/${product._id}`;
 
   return (
     <div className="group cursor-pointer w-full">
@@ -33,19 +38,20 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
         )}
 
         <Image
-          src={product.image}
-          alt={product.alt || product.name}
+          src={imageSrc}
+          alt={product.name || "BEMEN Product"}
           fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 50vw, 20vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          priority={false}
         />
         
         {/* উইশলিস্ট বাটন */}
         <button 
           onClick={(e) => {
-            e.preventDefault(); // মেইন লিঙ্ক ক্লিক হওয়া আটকাবে
-            e.stopPropagation(); // ইভেন্ট বাবলিং আটকাবে
-            console.log("Added to wishlist:", product.id);
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            console.log("Added to wishlist:", product._id);
           }}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:shadow-md z-20"
         >
@@ -64,7 +70,7 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           </h3>
         </Link>
         <p className="text-[11px] font-bold text-gray-800">
-          {product.price}
+          ৳ {product.price.toLocaleString()}
         </p>
       </div>
     </div>
