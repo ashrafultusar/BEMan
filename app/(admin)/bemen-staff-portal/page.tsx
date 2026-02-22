@@ -1,4 +1,4 @@
-import Dashboard from "@/components/admin/ashboard/Dashboard";
+import Dashboard from "@/components/admin/dashboard/Dashboard";
 
 
 const Page = () => {
