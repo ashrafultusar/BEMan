@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCategories } from "@/lib/data/category";
 import { Metadata } from "next";
+import DeleteCategoryBtn from "@/components/admin/category/DeleteCategoryBtn";
 
 export const metadata: Metadata = {
   title: "Manage Categories | BEMEN Staff Portal",
@@ -101,14 +102,19 @@ export default async function CategoriesPage() {
                   Actions
                 </span>
                 <div className="flex gap-4">
-                  <button className="flex items-center gap-1 text-gray-400 hover:text-black transition-colors text-[10px] font-black uppercase tracking-widest group/btn">
+                <Link 
+                    href={`/bemen-staff-portal/edit-category/${category._id}`} 
+                    className="flex items-center gap-1 text-gray-400 hover:text-black transition-colors text-[10px] font-black uppercase tracking-widest group/btn"
+                  >
                     <Pencil size={14} className="group-hover/btn:scale-110 transition-transform" />
-                    Edit
-                  </button>
-                  <button className="flex items-center gap-1 text-gray-400 hover:text-red-600 transition-colors text-[10px] font-black uppercase tracking-widest group/btn">
-                    <Trash2 size={14} className="group-hover/btn:scale-110 transition-transform" />
-                    Delete
-                  </button>
+                  
+                  </Link>
+                  <div className="">
+  
+
+ 
+  <DeleteCategoryBtn id={category._id.toString()} />
+</div>
                 </div>
               </footer>
             </article>
