@@ -8,7 +8,6 @@ export async function getCategories() {
     await connectDB();
     const categories = await Category.find({}).sort({ createdAt: -1 });
     
-    // Server side data fetch logic
     return { 
       success: true, 
       data: JSON.parse(JSON.stringify(categories)) 
