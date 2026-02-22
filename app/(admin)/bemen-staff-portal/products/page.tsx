@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
+import DeleteProductBtn from "@/components/admin/product/DeleteProductBtn";
 
 // --- SEO Metadata ---
 export const metadata: Metadata = {
@@ -90,19 +91,15 @@ export default async function ProductsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        title="Edit Product"
-                        className="text-gray-400 hover:text-black transition-colors"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button 
-                        title="Delete Product"
-                        className="text-gray-400 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                    <div className="flex justify-end gap-3 ">
+                    <Link 
+      href={`/bemen-staff-portal/edit-product/${p._id}`}
+      title="Edit Product"
+      className="text-gray-400 cursor-pointer hover:text-black transition-colors"
+    >
+      <Pencil size={18} />
+    </Link>
+    <DeleteProductBtn id={p._id.toString()} />
                     </div>
                   </td>
                 </tr>
