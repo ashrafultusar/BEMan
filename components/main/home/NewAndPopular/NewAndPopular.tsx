@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import { Heart } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "../../ProductCard/ProductCard";
-import { products } from "@/data/products";
+import { getProducts } from "@/lib/data/product"; // Apnar toiri kora function
+import { Loader2 } from "lucide-react";
 
 const filterCategories = [
   "ALL",
@@ -18,19 +17,36 @@ const filterCategories = [
 
 const NewAndPopular: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // --- Dynamic Data Fetching ---
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const result = await getProducts();
+      if (result.success) {
+        setProducts(result.data);
+      }
+      setLoading(false);
+    };
+
+    fetchProducts();
+  }, []);
+
+  // --- Filtering Logic ---
   const filteredProducts =
     selectedCategory === "ALL"
       ? products
       : products.filter((item) => item.category === selectedCategory);
 
   return (
-    <section className="bg-white py-12 px-4 max-w-[1400px] mx-auto">
+    <section className="bg-white py-12 px-4 max-w-[1400px] mx-auto min-h-[600px]">
       <h2 className="text-center text-sm font-bold tracking-[0.2em] uppercase mb-6 text-black">
         NEW AND POPULAR
       </h2>
 
-      {/* ৩. Filter Buttons with onClick handler */}
+      {/* Filter Buttons */}
       <div className="flex flex-wrap justify-center gap-2 mb-10">
         {filterCategories.map((cat) => (
           <button
@@ -48,16 +64,30 @@ const NewAndPopular: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-10 gap-x-4">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <Loader2 className="animate-spin text-gray-400" size={32} />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Loading BEMEN Collection...</p>
+        </div>
+      ) : (
+        <>
+          {/* Product Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-10 gap-x-4">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
 
-      {filteredProducts.length === 0 && (
-        <p className="text-center text-gray-500 py-20">
-          No products found in this category.
-        </p>
+          {/* Empty State */}
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-20 border border-dashed border-gray-100 rounded">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                No products found in {selectedCategory}
+              </p>
+            </div>
+          )}
+        </>
       )}
     </section>
   );
