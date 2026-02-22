@@ -5,6 +5,7 @@ import { Save, ArrowLeft, X, Plus, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/app/actions/productAction";
+import toast from "react-hot-toast";
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -39,11 +40,10 @@ export default function AddProductPage() {
     startTransition(async () => {
       const result = await createProduct(null, formData);
       if (result.success) {
-        alert(result.message);
-        router.push("/bemen-staff-portal/products");
+        toast.success("Product successfully added to BEMEN inventory!");
+              router.push("/bemen-staff-portal/products");
       } else {
-        alert(result.message);
-      }
+        toast.error('Failed to save product.');      }
     });
   };
 
