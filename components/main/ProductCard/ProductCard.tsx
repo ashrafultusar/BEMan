@@ -3,7 +3,9 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ShoppingCart, ArrowRight, Zap } from 'lucide-react';
+import { useCart, CartItem } from '@/context/CartContext'; 
 
 interface ProductProps {
   product: {
@@ -17,16 +19,43 @@ interface ProductProps {
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
+  const { addToCart } = useCart();
+  const router = useRouter();
+
   const imageSrc = product.images?.[0] || "/placeholder-image.jpg";
   const productPath = `/productDetails/${product._id}`;
+
+  // ডাটাবেস থেকে আসা তথ্যগুলো কার্টের জন্য গুছিয়ে নেওয়া
+  const formatProductForCart = (): CartItem => ({
+    _id: product._id,
+    name: product.name,
+    price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+    image: imageSrc,
+    category: product.category || "General",
+    quantity: 1 // এটি addToCart ফাংশনের ভেতরে হ্যান্ডেল হবে
+  });
+
+  // ১. Quick Add (শুধুমাত্র কার্টে অ্যাড হবে)
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(formatProductForCart());
+    console.log("Product logic applied: Count increased or new added.");
+  };
+
+  // ২. Order Now (কার্টে অ্যাড হয়ে সরাসরি চেকআউট পেজে যাবে)
+  const handleOrderNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(formatProductForCart());
+    router.push('/checkout'); 
+  };
 
   return (
     <div className="group relative w-full bg-white transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden border border-gray-100">
       
-   
+      {/* ইমেজ সেকশন */}
       <div className="relative aspect-[4/5] overflow-hidden bg-[#fbfbfb] p-2">
-        
-        {/* New Badge */}
         {product.isNew && (
           <div className="absolute top-3 left-3 z-20">
             <span className="bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-tighter shadow-sm">
@@ -35,7 +64,6 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           </div>
         )}
 
-        {/* Product Image */}
         <Link href={productPath} className="relative block w-full h-full rounded-lg overflow-hidden border border-gray-50">
           <Image
             src={imageSrc}
@@ -44,31 +72,27 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
             className="object-cover transition-transform duration-1000 group-hover:scale-110" 
             sizes="(max-width: 768px) 50vw, 25vw"
           />
-          
-          {/* Inner Shadow Overlay for depth */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </Link>
 
-        {/* Fancy Quick Add (Hover-on) */}
+        {/* Quick Add Button */}
         <div className="absolute inset-x-0 bottom-4 px-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
           <button 
-            onClick={(e) => { e.preventDefault(); console.log("Cart:", product._id); }}
-            className="w-full bg-white/95 backdrop-blur-sm text-black py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xl border border-white/20"
+            onClick={handleQuickAdd}
+            className="w-full cursor-pointer bg-white/95 backdrop-blur-sm text-black py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-all shadow-xl border border-white/20"
           >
-            <ShoppingCart size={15} className="text-[#2563EB]" /> {/* Real blue color */}
+            <ShoppingCart size={15} className="text-[#2563EB]" />
             QUICK ADD
           </button>
         </div>
       </div>
 
-      {/* --- Details Section --- */}
+      {/* টেক্সট ডিটেইলস */}
       <div className="p-4 pt-2">
         <div className="mb-3">
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
-              {product.category}
-            </p>
-          </div>
+          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">
+            {product.category}
+          </p>
           <Link href={productPath}>
             <h3 className="text-[14px] font-bold text-gray-800 group-hover:text-black transition-colors line-clamp-1 leading-tight tracking-tight">
               {product.name}
@@ -81,16 +105,15 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           </div>
         </div>
 
-        {/* Main Action Button */}
+        {/* Order Now Button */}
         <button 
-          onClick={(e) => { e.preventDefault(); console.log("Order Now:", product._id); }}
+          onClick={handleOrderNow}
           className="w-full cursor-pointer relative group/btn h-11 overflow-hidden bg-gray-950 text-white rounded-lg flex items-center justify-center transition-all active:scale-95 shadow-md"
         >
-        
           <div className="absolute inset-0 w-0 bg-gradient-to-r from-blue-700 to-blue-500 transition-all duration-500 ease-out group-hover/btn:w-full" />
           
           <div className="relative z-10 flex items-center justify-center gap-2 font-bold text-[12px] tracking-wider uppercase">
-            <Zap size={14} fill="#FFD700" className="text-[#FFD700]" /> {/* Real gold color */}
+            <Zap size={14} fill="#FFD700" className="text-[#FFD700]" />
             Order Now
             <ArrowRight size={14} className="ml-1 group-hover/btn:translate-x-1 transition-transform" />
           </div>
