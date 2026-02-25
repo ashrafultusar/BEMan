@@ -1,40 +1,76 @@
-import React from 'react';
-import { Package, ShoppingCart, DollarSign, Users } from 'lucide-react';
+"use client";
 
-const Dashboard = () => {
+import React from 'react';
+import { Package, ShoppingCart, DollarSign, Layers, ImageIcon } from 'lucide-react';
+
+const Dashboard = ({ data }: { data: any }) => {
+  const { totalProducts, totalOrders, totalRevenue, totalCategories, recentOrders, categories } = data;
+
+  // স্ট্যাটাস অনুযায়ী ডাইনামিক কালার লজিক
+  const getStatusStyle = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'delivered': return 'text-green-600 bg-green-50';
+      case 'shipped': return 'text-blue-600 bg-blue-50';
+      case 'processing': return 'text-amber-600 bg-amber-50';
+      case 'pending': return 'text-red-500 bg-red-50';
+      case 'cancelled': return 'text-gray-500 bg-gray-100';
+      default: return 'text-gray-400 bg-gray-50';
+    }
+  };
+
   return (
-    <div className="p-8 bg-[#f9f7f5] min-h-screen space-y-8">
-      <h1 className="text-2xl font-serif font-bold text-[#1a1a1a]">Dashboard</h1>
+    <div className="p-8 bg-[#f9f7f5] min-h-screen space-y-8 font-sans">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-black text-[#1a1a1a] uppercase tracking-tighter">BEMEN Dashboard</h1>
+        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-white px-3 py-1 border border-gray-200 rounded-full">
+          Live Stats
+        </div>
+      </div>
 
       {/* --- Stat Cards Section --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={<Package size={20} />} label="Products" value="12" />
-        <StatCard icon={<ShoppingCart size={20} />} label="Orders" value="4" />
-        <StatCard icon={<DollarSign size={20} />} label="Revenue" value="৳28,900" />
-        <StatCard icon={<Users size={20} />} label="Admins" value="3" />
+        <StatCard icon={<Package size={20} />} label="Total Products" value={totalProducts} />
+        <StatCard icon={<ShoppingCart size={20} />} label="Total Orders" value={totalOrders} />
+        <StatCard icon={<DollarSign size={20} />} label="Delivered Revenue" value={`৳${totalRevenue.toLocaleString()}`} />
+        <StatCard icon={<Layers size={20} />} label="Categories" value={totalCategories} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* --- Recent Orders Section --- */}
-        <div className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm">
-          <h2 className="text-lg font-serif font-bold mb-6">Recent Orders</h2>
+        {/* --- Recent Orders (Dynamic) --- */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-[11px] font-black mb-6 uppercase tracking-[0.2em] text-gray-400">Recent Orders</h2>
           <div className="space-y-6">
-            <OrderItem id="ORD-001" name="Rahim Ahmed" amount="2,400" status="delivered" color="text-orange-600 bg-orange-50" />
-            <OrderItem id="ORD-002" name="Karim Hassan" amount="8,500" status="shipped" color="text-red-400 bg-red-50" />
-            <OrderItem id="ORD-003" name="Fatima Begum" amount="6,000" status="processing" color="text-gray-400 bg-gray-50" />
-            <OrderItem id="ORD-004" name="Arif Khan" amount="12,000" status="pending" color="text-red-500 bg-red-50" />
+            {recentOrders.map((order: any) => (
+              <OrderItem 
+                key={order._id}
+                id={order.orderId} 
+                name={order.customerName} 
+                amount={order.totalAmount.toLocaleString()} 
+                status={order.status} 
+                color={getStatusStyle(order.status)} 
+              />
+            ))}
+            {recentOrders.length === 0 && (
+              <p className="text-gray-400 italic text-sm py-10 text-center">No orders yet.</p>
+            )}
           </div>
         </div>
 
-        {/* --- Categories Section --- */}
-        <div className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm">
-          <h2 className="text-lg font-serif font-bold mb-6">Categories</h2>
+        {/* --- Categories (Dynamic) - Name Left, Image Right --- */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-[11px] font-black mb-6 uppercase tracking-[0.2em] text-gray-400">Category List</h2>
           <div className="divide-y divide-gray-100">
-            <CategoryItem name="T-Shirts" count="8" />
-            <CategoryItem name="Shirts" count="6" />
-            <CategoryItem name="Pants" count="5" />
-            <CategoryItem name="Jackets" count="4" />
-            <CategoryItem name="Accessories" count="3" />
+            {categories.slice(0, 6).map((cat: any) => (
+              <CategoryItem 
+                key={cat._id} 
+                name={cat.name} 
+                slug={cat.slug} 
+                image={cat.image} 
+              />
+            ))}
+            {categories.length === 0 && (
+              <p className="text-gray-400 italic text-sm py-10 text-center">No categories found.</p>
+            )}
           </div>
         </div>
       </div>
@@ -44,35 +80,58 @@ const Dashboard = () => {
 
 // --- Sub Components ---
 
-const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
-  <div className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm flex flex-col gap-3">
-    <div className="bg-[#fdf2f0] text-[#d97d6d] p-2 w-fit rounded-md">{icon}</div>
+const StatCard = ({ icon, label, value }: any) => (
+  <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm flex flex-col gap-4 transition-transform hover:scale-[1.02]">
+    <div className="bg-black text-white p-2 w-fit rounded-lg shadow-lg">
+      {icon}
+    </div>
     <div>
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
-      <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
+      <div className="text-2xl font-black text-gray-900 tracking-tighter leading-none">{value}</div>
+      <div className="text-[10px] text-gray-400 uppercase font-black tracking-[0.15em] mt-2">{label}</div>
     </div>
   </div>
 );
 
 const OrderItem = ({ id, name, amount, status, color }: any) => (
-  <div className="flex justify-between items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+  <div className="flex justify-between items-center border-b border-gray-50 pb-4 last:border-0 last:pb-0">
     <div>
-      <div className="text-sm font-bold text-gray-800">{id}</div>
-      <div className="text-xs text-gray-400">{name}</div>
+      <div className="text-sm font-black text-black uppercase tracking-tighter">{id}</div>
+      <div className="text-xs font-bold text-gray-400">{name}</div>
     </div>
-    <div className="text-right space-y-1">
-      <div className="text-sm font-bold text-gray-800">৳{amount}</div>
-      <div className={`text-[10px] px-2 py-0.5 rounded capitalize font-medium ${color}`}>
+    <div className="text-right">
+      <div className="text-sm font-black text-black">৳{amount}</div>
+      <div className={`text-[9px] px-2 py-0.5 rounded-full uppercase font-black mt-1 inline-block tracking-tighter ${color}`}>
         {status}
       </div>
     </div>
   </div>
 );
 
-const CategoryItem = ({ name, count }: { name: string, count: string }) => (
-  <div className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
-    <span className="text-sm font-medium text-gray-700">{name}</span>
-    <span className="text-xs text-gray-400">{count} products</span>
+// 🟢 ক্যাটাগরি আইটেম: নাম বামে এবং ইমেজ ডানে
+const CategoryItem = ({ name, slug, image }: any) => (
+  <div className="flex justify-between items-center py-3 first:pt-0 last:pb-0 group">
+    {/* টেক্সট সেকশন (বামে) */}
+    <div className="flex flex-col">
+      <span className="text-sm font-bold text-gray-800 leading-tight group-hover:text-black transition-colors">
+        {name}
+      </span>
+      <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest mt-0.5">
+        {slug}
+      </span>
+    </div>
+
+    {/* ইমেজ সেকশন (ডানে) */}
+    <div className="w-11 h-11 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center shadow-sm group-hover:border-black transition-all">
+      {image ? (
+        <img 
+          src={image} 
+          alt={name} 
+          className="w-full h-full object-cover transition-transform group-hover:scale-110"
+        />
+      ) : (
+        <ImageIcon className="text-gray-200" size={18} />
+      )}
+    </div>
   </div>
 );
 
