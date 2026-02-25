@@ -2,7 +2,6 @@
 import {
   LayoutDashboard,
   ShoppingBag,
-  Users,
   Image as ImageIcon,
   Settings,
   ChevronRight,
@@ -23,6 +22,7 @@ const mainMenuItems = [
   { name: "Orders", icon: Truck, href: "/bemen-staff-portal/orders" },
   { name: "Products", icon: ShoppingBag, href: "/bemen-staff-portal/products" },
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
+  { name: "Shipping", icon: Layers, href: "/bemen-staff-portal/shipping" },
   {
     name: "Administation",
     icon: Settings,

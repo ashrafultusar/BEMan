@@ -4,10 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
+import { useCart } from "@/context/CartContext"; 
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
+  
+  // ২. কার্ট স্টেট থেকে ডাটা নিন
+  const { cart } = useCart();
+
+  // ৩. কার্টের মোট আইটেম সংখ্যা গণনা করার লজিক
+  // এটি একই প্রোডাক্টের মাল্টিপল কোয়ান্টিটিও যোগ করবে
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     async function fetchNavbarCats() {
@@ -51,10 +59,24 @@ export default function Navbar() {
               <Search size={18} className="text-gray-400" />
               <input type="text" placeholder='Search "Resort"' className="ml-2 outline-none text-sm w-32 lg:w-48" />
             </div>
-            <button className="p-2 text-gray-700 hover:text-black"><User size={22} /></button>
+            
+            <button className="p-2 text-gray-700 hover:text-black">
+              <User size={22} />
+            </button>
+
+            {/* ৪. শপিং ব্যাগ আইকন - এখানে ডাইনামিক নাম্বার বসানো হয়েছে */}
             <Link href={'/checkout'} className="p-2 text-gray-700 hover:text-black relative">
               <ShoppingBag size={22} />
-              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
+              {totalItems > 0 && ( // যদি কার্ট খালি থাকে তবে ০ দেখাবে না, আইটেম থাকলেই ব্যাজ দেখাবে
+                <span className="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full animate-in zoom-in duration-300">
+                  {totalItems}
+                </span>
+              )}
+              {totalItems === 0 && (
+                <span className="absolute top-1 right-1 bg-gray-400 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                  0
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -66,7 +88,7 @@ export default function Navbar() {
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* --- Sidebar Menu (Left Side) --- */}
+      {/* --- Sidebar Menu --- */}
       <div
         className={`fixed top-0 left-0 h-full w-[320px] bg-white z-[110] shadow-2xl transition-transform duration-500 ease-in-out ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -80,7 +102,6 @@ export default function Navbar() {
 
           <nav className="flex-1 overflow-y-auto py-6 px-6">
             <div className="space-y-6">
-              {/* Static Links First */}
               <div>
                 <Link href="/shop/all" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-4">
                   Shop All
@@ -90,7 +111,6 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              {/* Dynamic Categories */}
               <div className="space-y-4">
                 <p className="text-[10px] font-bold text-zinc-300 tracking-[0.3em] uppercase border-b pb-2">Collections</p>
                 {dynamicCategories.map((cat) => (
