@@ -5,107 +5,140 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ProductCard from "@/components/main/ProductCard/ProductCard";
 import { ArrowLeft, Plus, Minus } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Props {
   product: any;
   relatedProducts: any[];
+  shippingRates: { insideDhaka: number; outsideDhaka: number };
 }
 
-export default function ProductDetailsClient({ product, relatedProducts }: Props) {
+export default function ProductDetailsClient({ product, relatedProducts, shippingRates }: Props) {
   const router = useRouter();
-  const [activeImage, setActiveImage] = useState<string>(product.images?.[0] || "/placeholder-image.jpg");
-  const [selectedSize, setSelectedSize] = useState("");
+  const { addToCart } = useCart();
+  const [activeImage, setActiveImage] = useState<string>(product.images?.[0] || "/placeholder.jpg");
   const [openSection, setOpenSection] = useState<string | null>("details");
 
-  const toggleSection = (section: string) => {
-    setOpenSection(openSection === section ? null : section);
+  const handleAddToCart = () => {
+    addToCart({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      category: product.category,
+      quantity: 1,
+    });
+    toast.success("Added to Bag!", { position: "top-center" });
+  };
+
+  const handleOrderNow = () => {
+    handleAddToCart();
+    router.push("/checkout");
   };
 
   return (
-    <div className="bg-white min-h-screen font-sans">
+    <div className="bg-white min-h-screen font-sans text-slate-900">
+      <Toaster />
       <div className="max-w-[1200px] mx-auto px-4 py-6">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-500 hover:text-black mb-6 transition-colors text-[11px] font-bold tracking-widest uppercase"
+          className="flex items-center gap-2 text-gray-500 hover:text-black mb-6 transition-colors text-xs font-bold uppercase"
         >
           <ArrowLeft size={16} /> Back
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
           
           {/* LEFT: IMAGE SECTION */}
           <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
-            {/* Thumbnails */}
-            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto no-scrollbar md:max-h-[600px] shrink-0">
+            <div className="flex md:flex-col gap-3 overflow-x-auto no-scrollbar shrink-0">
               {product.images?.map((img: string, index: number) => (
                 <div 
                   key={index}
                   onClick={() => setActiveImage(img)}
-                  className={`relative w-16 h-20 md:w-20 md:h-24 cursor-pointer border transition-all duration-200 rounded-sm overflow-hidden shrink-0 ${
-                    activeImage === img ? "border-black" : "border-transparent opacity-60 hover:opacity-100"
+                  className={`relative w-16 h-20 md:w-20 md:h-24 cursor-pointer border transition-all rounded-sm overflow-hidden shrink-0 ${
+                    activeImage === img ? "border-black" : "border-transparent opacity-60"
                   }`}
                 >
-                  <Image src={img} alt={product.name} fill  priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" className="object-cover" />
+                  <Image src={img} alt={product.name} fill sizes="80px" className="object-cover" />
                 </div>
               ))}
             </div>
 
-            {/* Main Image */}
-            <div className="relative w-full aspect-[4/5] md:aspect-[3/4] max-h-[500px] md:max-h-[700px] bg-[#f9f9f9] rounded-sm overflow-hidden flex-1">
-              <Image
-                src={activeImage}
-                alt={product.name}
-                fill
-                priority
-                className="object-contain p-4 md:p-8 transition-opacity duration-300"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-              />
+            <div className="relative w-full aspect-[4/5] bg-[#f9f9f9] rounded-sm overflow-hidden flex-1">
+              <Image src={activeImage} alt={product.name} fill priority className="object-contain p-4" sizes="(max-width: 768px) 100vw, 800px" />
             </div>
           </div>
 
-          {/* RIGHT: PRODUCT INFO */}
+          {/* RIGHT: PRODUCT INFO (Based on your Uploaded Image) */}
           <div className="lg:col-span-5 flex flex-col">
-            <div className="mb-6 border-b pb-6">
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-tight mb-1">{product.name}</h1>
-              <p className="text-gray-400 text-[10px] font-bold tracking-[0.2em] uppercase mb-4">{product.category}</p>
-              <p className="text-xl md:text-2xl font-medium text-gray-900">৳ {Number(product.price).toLocaleString()}</p>
+            <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+            
+            <div className="flex items-center gap-3 mb-6">
+               <span className="text-3xl font-bold">Price: <span className="text-red-600">৳ {Number(product.price).toLocaleString()}</span></span>
+               {product.oldPrice && (
+                 <span className="text-gray-400 line-through text-xl">৳ {product.oldPrice}</span>
+               )}
             </div>
 
-            {/* Size Selection */}
-            <div className="mb-8">
-              <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4">Select Size</h4>
-              <div className="flex flex-wrap gap-2">
-                {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-10 h-10 md:w-12 md:h-12 text-[10px] md:text-[11px] font-bold border transition-all ${
-                      selectedSize === size ? "border-black bg-black text-white" : "border-gray-200 text-gray-900 hover:border-black"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {/* Buttons Group */}
+            <div className="flex flex-col md:flex-row gap-3 mb-4">
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 bg-[#ffb400] hover:bg-[#e6a200] text-black font-bold py-4 rounded-md transition-all text-sm uppercase"
+              >
+                Add to cart
+              </button>
+              <button 
+                onClick={handleOrderNow}
+                className="flex-1 bg-[#ff8000] hover:bg-[#e67300] text-white font-bold py-4 rounded-md transition-all text-sm uppercase"
+              >
+                অর্ডার করুন
+              </button>
+            </div>
+
+            {/* Call Section */}
+            <div className="bg-[#e2eeff] text-black text-center py-3 rounded-md font-bold mb-6 text-sm border border-blue-100">
+              কল করতে ক্লিক করুন: 01795072200
+            </div>
+
+            {/* Product Meta */}
+            <div className="space-y-3 mb-8">
+              <p className="text-sm font-bold">Code : <span className="font-normal">N/A</span></p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold">Category:</p>
+                <span className="bg-[#cbd5e1] text-black text-[10px] font-black px-4 py-1.5 rounded-full uppercase">
+                  {product.category}
+                </span>
               </div>
             </div>
 
-            <button className="w-full bg-black text-white h-12 md:h-14 font-bold text-[11px] tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all">
-              ADD TO BAG
-            </button>
+            {/* Shipping Table (Image Style) */}
+            <div className="border-t-[1.5px] border-black">
+              <div className="flex justify-between py-2 border-b border-gray-300">
+                <span className="text-sm">ঢাকায় ডেলিভারি খরচ</span>
+                <span className="text-sm font-bold text-right italic">৳ {shippingRates.insideDhaka}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-300">
+                <span className="text-sm">ঢাকার বাইরে কুরিয়ার খরচ</span>
+                <span className="text-sm font-bold text-right italic">৳ {shippingRates.outsideDhaka}</span>
+              </div>
+            </div>
 
-            {/* Accordions */}
-            <div className="mt-8 border-t border-b divide-y divide-gray-100">
-              <AccordionItem title="Description" isOpen={openSection === "details"} onClick={() => toggleSection("details")}>
-                <p className="text-[12px] text-gray-600 pb-2">{product.description}</p>
+            {/* Description Accordion */}
+            <div className="mt-8 border-b">
+              <AccordionItem title="Description" isOpen={openSection === "details"} onClick={() => setOpenSection(openSection === "details" ? null : "details")}>
+                <p className="text-sm text-gray-600 leading-relaxed">{product.description}</p>
               </AccordionItem>
             </div>
           </div>
         </div>
 
-        {/* Related Items */}
+        {/* Related Products */}
         <section className="mt-20 border-t pt-16">
-          <h2 className="text-center text-xs font-bold tracking-[0.4em] uppercase mb-12">Related Items</h2>
+          <h2 className="text-center text-[10px] font-bold tracking-[0.4em] uppercase mb-12">Related Items</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {relatedProducts.map((item: any) => (
               <ProductCard key={item._id} product={item} />
@@ -118,13 +151,13 @@ export default function ProductDetailsClient({ product, relatedProducts }: Props
 }
 
 const AccordionItem = ({ title, children, isOpen, onClick }: any) => (
-  <div className="py-4">
-    <button onClick={onClick} className="w-full flex justify-between items-center text-[11px] font-bold uppercase tracking-widest py-1 hover:text-gray-500 transition-colors">
+  <div className="py-4 border-t">
+    <button onClick={onClick} className="w-full flex justify-between items-center text-[11px] font-bold uppercase tracking-widest">
       {title}
-      <div className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}>{isOpen ? <Minus size={14} /> : <Plus size={14} />}</div>
+      <div>{isOpen ? <Minus size={14} /> : <Plus size={14} />}</div>
     </button>
-    <div className={`grid transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0 mt-0"}`}>
-      <div className="min-h-0"><div className="pb-2">{children}</div></div>
+    <div className={`grid transition-all duration-300 overflow-hidden ${isOpen ? "grid-rows-[1fr] mt-4" : "grid-rows-[0fr]"}`}>
+      <div className="min-h-0">{children}</div>
     </div>
   </div>
 );
