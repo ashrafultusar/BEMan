@@ -7,13 +7,13 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const response = await getOrderById(id);
 
+  // যদি ডাটাবেসে অর্ডারটি খুঁজে না পাওয়া যায়
   if (!response.success) {
     notFound();
   }
 
   const order = response.data;
 
-  // তারিখ ফরম্যাট করার জন্য
   const orderDate = new Date(order.createdAt).toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
@@ -23,24 +23,23 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
   return (
     <main className="min-h-screen bg-gray-50 py-12 md:py-20 px-4">
       <div className="max-w-3xl mx-auto">
-        
-        {/* Success Message Card */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+          {/* Header Card */}
           <div className="bg-black p-10 text-center text-white">
             <div className="flex justify-center mb-4">
               <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm">
-                <CheckCircle2 size={48} className="text-green-400 animate-pulse" />
+                <CheckCircle2 size={48} className="text-green-400" />
               </div>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2 uppercase tracking-tight">Order Confirmed!</h1>
-            <p className="text-gray-400 text-sm">Thank you for shopping with <span className="text-white font-bold">BEMEN</span>. Your order has been placed.</p>
+            <p className="text-gray-400 text-sm">Thank you for shopping with <span className="text-white font-bold">BEMEN</span>.</p>
             
             <div className="mt-6 flex flex-col items-center gap-2">
               <div className="inline-block bg-white/10 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-1">Tracking ID</p>
                 <p className="font-mono font-black text-xl md:text-2xl text-white">
-                  {/* ডাইনামিক কাস্টম আইডি */}
-                  {order.customOrderId || `BEMEN-#${order._id.slice(-6).toUpperCase()}`}
+                  {/* ডাটাবেস ফিল্ড orderId ব্যবহার করা হয়েছে */}
+                  {order.orderId}
                 </p>
               </div>
               <p className="text-[10px] text-gray-500 flex items-center gap-1 mt-2">
@@ -64,12 +63,6 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
                     <Home size={14} className="mt-1 flex-shrink-0" /> 
                     {order.address}
                   </p>
-                  {order.notes && (
-                    <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100 text-[12px]">
-                      <span className="font-bold text-yellow-800 block mb-1">Note:</span>
-                      "{order.notes}"
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -95,7 +88,7 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
                     <span>৳{order.subtotal}</span>
                   </div>
                   <div className="flex justify-between text-sm text-gray-500">
-                    <span>Delivery Fee</span>
+                    <span>Delivery</span>
                     <span>৳{order.deliveryCharge}</span>
                   </div>
                   <div className="flex justify-between font-black text-2xl text-green-600 pt-2 border-t">
@@ -104,22 +97,15 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
                   </div>
                 </div>
               </div>
-
             </div>
 
-            {/* Actions */}
-            <div className="mt-12 flex flex-col sm:flex-row gap-4">
-              <Link 
-                href="/" 
-                className="flex-1 bg-black text-white text-center py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-black/10"
-              >
+            <div className="mt-12">
+              <Link href="/" className="w-full bg-black text-white text-center py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all active:scale-95 shadow-lg">
                 <ShoppingBag size={18} /> CONTINUE SHOPPING
               </Link>
-              {/* আপনি চাইলে এখানে প্রিন্ট বাটনটি আবার যোগ করতে পারেন */}
             </div>
           </div>
         </div>
-
         <p className="text-center text-gray-400 text-[10px] uppercase tracking-[0.3em]">Wear Bemen to be Men</p>
       </div>
     </main>

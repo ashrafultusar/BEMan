@@ -2,16 +2,8 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 const OrderSchema = new Schema(
   {
-    // এটি হবে আপনার ফিক্সড আইডি ফরম্যাট
-    customOrderId: { 
-      type: String, 
-      unique: true,
-      default: function() {
-        // ৬ অক্ষরের একটি র্যান্ডম কোড জেনারেট করবে
-        const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        return `BEMEN-#${randomCode}`; // BEMEN-#FIXED অংশ
-      }
-    },
+    
+    orderId: { type: String, required: true, unique: true },
     customerName: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     address: { type: String, required: true },
