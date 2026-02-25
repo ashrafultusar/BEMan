@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function CheckoutPage() {
-  // ডাটাবেস থেকে সরাসরি সার্ভারে চার্জ ফেচ করা হচ্ছে
+
   const shippingRates = await getShippingCharges();
 
   return (
