@@ -1,11 +1,10 @@
 "use client";
-
+ 
 import { Eye, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
   
-  // স্ট্যাটাস অনুযায়ী কালার সেট করার ফাংশন
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered': return 'bg-green-100 text-green-700';
@@ -38,7 +37,7 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
             {initialOrders.map((order) => (
               <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 text-sm font-medium">
-                  #{order._id.slice(-6).toUpperCase()}
+                  {order.orderId}
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm font-medium text-gray-700">{order.customerName}</div>

@@ -1,22 +1,33 @@
 "use server";
 
-
 import { connectDB } from "@/db/dbConfig";
 import { Order } from "@/models/Order";
+import crypto from "crypto";
 
-// app/actions/orderAction.ts
 export async function createOrder(orderData: any) {
   try {
     await connectDB();
-    const newOrder = new Order(orderData);
-    await newOrder.save(); // pre-save hook এখানে আইডি জেনারেট করবে
+    
+    // ইউনিক আইডি জেনারেট (BEMEN-XXXXXX)
+    const randomPart = crypto.randomBytes(3).toString("hex").toUpperCase();
+    const customOrderId = `BEMEN-${randomPart}`;
+
+    const finalOrderData = {
+      ...orderData,
+      orderId: customOrderId
+    };
+    
+    const newOrder = await Order.create(finalOrderData);
     
     return { 
       success: true, 
-      orderId: newOrder._id.toString(), // URL-এর জন্য মঙ্গো আইডি
-      customOrderId: newOrder.customOrderId // ইউজারকে দেখানোর জন্য BEMEN আইডি
+      orderId: newOrder.orderId // এটি সাকসেস পেজের URL-এ যাবে
     };
   } catch (error: any) {
-    return { success: false, message: error.message };
+    console.error("Order Creation Error:", error);
+    return { 
+      success: false, 
+      message: error.message || "Failed to place order." 
+    };
   }
 }

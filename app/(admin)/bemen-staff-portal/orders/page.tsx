@@ -5,5 +5,6 @@ export default async function OrdersPage() {
   const response = await getAllOrders();
   const orders = response.data || [];
 
+
   return <OrderTable initialOrders={orders} />;
 }
