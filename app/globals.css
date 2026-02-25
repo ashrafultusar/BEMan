@@ -54,3 +54,16 @@ body {
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
  }
+
+
+/* Chrome, Safari, Edge, Opera থেকে অ্যারো বাটন সরানো */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox-এর জন্য */
+input[type=number] {
+  -moz-appearance: textfield;
+}

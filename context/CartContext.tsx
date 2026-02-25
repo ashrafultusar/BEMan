@@ -16,15 +16,15 @@ interface CartContextType {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  updateQuantity: (id: string, type: 'plus' | 'minus') => void; // এখানে ডিফাইন করা হয়েছে
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  // ১. State initialize korar somoy localStorage check kora hochhe
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Client-side e initial data load kora
+  // ১ম বার পেজ লোড হলে LocalStorage থেকে ডাটা নেওয়া
   useEffect(() => {
     const savedCart = localStorage.getItem('bemen_cart');
     if (savedCart) {
@@ -32,7 +32,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // ২. Cart change hoilei localStorage update hobe
+  // কার্ট পরিবর্তন হলে LocalStorage আপডেট করা
   useEffect(() => {
     localStorage.setItem('bemen_cart', JSON.stringify(cart));
   }, [cart]);
@@ -42,16 +42,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const existingItem = prevCart.find((item) => item._id === newItem._id);
 
       if (existingItem) {
-        // Quantity update - eta shathe shathe re-render korbe
-        const updatedCart = prevCart.map((item) =>
+        return prevCart.map((item) =>
           item._id === newItem._id 
             ? { ...item, quantity: item.quantity + 1 } 
             : item
         );
-        return updatedCart;
       }
       return [...prevCart, { ...newItem, quantity: 1 }];
     });
+  };
+
+  // --- নতুন ফাংশন: Quantity কমানো বা বাড়ানোর জন্য ---
+  const updateQuantity = (id: string, type: 'plus' | 'minus') => {
+    setCart((prevCart) =>
+      prevCart.map((item) => {
+        if (item._id === id) {
+          const newQty = type === 'plus' ? item.quantity + 1 : item.quantity - 1;
+          // নিশ্চিত করা হচ্ছে যেন quantity ১ এর নিচে না যায়
+          return { ...item, quantity: Math.max(1, newQty) };
+        }
+        return item;
+      })
+    );
   };
 
   const removeFromCart = (id: string) => {
@@ -63,7 +75,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    // এখানে অবশ্যই updateQuantity পাস করতে হবে
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, updateQuantity }}>
       {children}
     </CartContext.Provider>
   );
