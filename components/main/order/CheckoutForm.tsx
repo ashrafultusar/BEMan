@@ -9,15 +9,13 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orderAction";
 
-
-export default function CheckoutClient({ initialRates }: { initialRates: any }) {
+export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const [deliveryCharge, setDeliveryCharge] = useState(initialRates.insideDhaka);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  // Form State
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -31,7 +29,6 @@ export default function CheckoutClient({ initialRates }: { initialRates: any }) 
   const total = subtotal + deliveryCharge;
 
   const handleConfirmOrder = async () => {
-    // Validation
     if (!formData.name || !formData.phone || !formData.address) {
       return toast.error("Please fill all required fields!");
     }
@@ -60,6 +57,7 @@ export default function CheckoutClient({ initialRates }: { initialRates: any }) 
       if (result.success) {
         toast.success("Order Placed Successfully!");
         clearCart();
+        
         router.push(`/order-success/${result.orderId}`);
       } else {
         toast.error(result.message);
