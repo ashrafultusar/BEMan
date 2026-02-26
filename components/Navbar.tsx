@@ -5,16 +5,15 @@ import Link from "next/link";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
 import { useCart } from "@/context/CartContext"; 
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
-  
-  // ২. কার্ট স্টেট থেকে ডাটা নিন
-  const { cart } = useCart();
+  const [searchQuery, setSearchQuery] = useState(""); // Search input state
+  const router = useRouter();
 
-  // ৩. কার্টের মোট আইটেম সংখ্যা গণনা করার লজিক
-  // এটি একই প্রোডাক্টের মাল্টিপল কোয়ান্টিটিও যোগ করবে
+  const { cart } = useCart();
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
@@ -27,13 +26,23 @@ export default function Navbar() {
     fetchNavbarCats();
   }, []);
 
+  // Search Submit Function
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Direct shop page-e query niye jabe
+      router.push(`/shop/all?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery(""); // Search hoye gele input clear hobe
+    }
+  };
+
   return (
     <>
       {/* --- Main Navbar Section --- */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 h-16">
         <div className="mx-auto px-4 h-full flex items-center justify-between">
           
-          {/* Hamburger Menu */}
+          {/* Left: Hamburger Menu */}
           <div className="flex-1 flex items-center">
             <button
               onClick={() => setMobileOpen(true)}
@@ -53,28 +62,42 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right Icons */}
+          {/* Right Icons & Search Bar */}
           <div className="flex-1 flex items-center justify-end gap-2 md:gap-5">
-            <div className="hidden md:flex items-center border border-gray-200 rounded px-3 py-1.5">
-              <Search size={18} className="text-gray-400" />
-              <input type="text" placeholder='Search "Resort"' className="ml-2 outline-none text-sm w-32 lg:w-48" />
+            
+            {/* --- Inline Search Bar --- */}
+            <form 
+              onSubmit={handleSearch}
+              className="hidden md:flex items-center border border-gray-200 rounded px-3 py-1.5 focus-within:border-black transition-colors"
+            >
+              <button type="submit" className="text-gray-400 hover:text-black">
+                <Search size={18} />
+              </button>
+              <input 
+                type="text" 
+                placeholder='Search "Premium"...' 
+                className="ml-2 outline-none text-sm w-32 lg:w-48 bg-transparent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
+
+            {/* Mobile Search Icon (Optional: can link to a simple input toggle) */}
+            <div className="md:hidden">
+               {/* Mobile-e jodi alada toggle na chao, tobe eikhane icon thakbe */}
+               <Search size={22} className="text-gray-700" onClick={() => router.push('/shop/all')} />
             </div>
             
             <button className="p-2 text-gray-700 hover:text-black">
               <User size={22} />
             </button>
 
-            {/* ৪. শপিং ব্যাগ আইকন - এখানে ডাইনামিক নাম্বার বসানো হয়েছে */}
+            {/* Shopping Bag */}
             <Link href={'/checkout'} className="p-2 text-gray-700 hover:text-black relative">
               <ShoppingBag size={22} />
-              {totalItems > 0 && ( // যদি কার্ট খালি থাকে তবে ০ দেখাবে না, আইটেম থাকলেই ব্যাজ দেখাবে
-                <span className="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full animate-in zoom-in duration-300">
+              {totalItems >= 0 && (
+                <span className={`absolute top-1 right-1 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full ${totalItems > 0 ? 'bg-red-600 animate-in zoom-in duration-300' : 'bg-gray-400'}`}>
                   {totalItems}
-                </span>
-              )}
-              {totalItems === 0 && (
-                <span className="absolute top-1 right-1 bg-gray-400 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
-                  0
                 </span>
               )}
             </Link>
@@ -103,10 +126,10 @@ export default function Navbar() {
           <nav className="flex-1 overflow-y-auto py-6 px-6">
             <div className="space-y-6">
               <div>
-                <Link href="/shop/all" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-4">
+                <Link href="/shop/all" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-4 hover:text-black transition-colors">
                   Shop All
                 </Link>
-                <Link href="/bemen-staff-portal" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-6">
+                <Link href="/bemen-staff-portal" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-6 hover:text-black transition-colors">
                   Dashboard
                 </Link>
               </div>
@@ -118,7 +141,7 @@ export default function Navbar() {
                     key={cat._id}
                     href={`/shop/${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
                     onClick={() => setMobileOpen(false)}
-                    className="block text-2xl font-bold text-gray-900 hover:text-zinc-500 transition-colors lowercase first-letter:uppercase"
+                    className="block text-2xl font-bold text-gray-900 hover:text-[#c5a47e] transition-colors lowercase first-letter:uppercase"
                   >
                     {cat.name}
                   </Link>
