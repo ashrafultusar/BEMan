@@ -1,0 +1,111 @@
+/* CraftedSection.module.css */
+.section {
+    position: relative;
+    width: 100%;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff; /* White Theme match korar jonno */
+    overflow: hidden;
+  }
+  
+  /* Background Texture/Pattern */
+  .section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(#c5a47e 0.5px, transparent 0.5px);
+    background-size: 30px 30px;
+    opacity: 0.1;
+    pointer-events: none;
+  }
+  
+  .container {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 20px;
+    max-width: 800px;
+  }
+  
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: #c5a47e; /* Real Gold */
+    margin-bottom: 20px;
+    display: block;
+  }
+  
+  .title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    font-family: serif; /* Modern Serif look */
+  }
+  
+  .italic {
+    font-style: italic;
+    color: #c5a47e;
+    font-family: serif;
+  }
+  
+  .description {
+    font-size: 14px;
+    line-height: 2;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #555555;
+    max-width: 500px;
+    margin: 0 auto 40px auto;
+  }
+  
+  /* Unique Button Design */
+  .btnWrapper {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 40px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #1a1a1a;
+  }
+  
+  .button:hover {
+    background-color: transparent;
+    color: #1a1a1a;
+    padding-right: 50px;
+  }
+  
+  .button svg {
+    transition: transform 0.4s ease;
+  }
+  
+  .button:hover svg {
+    transform: translateX(8px);
+    color: #c5a47e;
+  }
+  
+  /* Decorative Gold Dots */
+  .dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #c5a47e;
+    border-radius: 50%;
+    opacity: 0.3;
+  }

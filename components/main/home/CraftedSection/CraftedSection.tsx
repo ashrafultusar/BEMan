@@ -1,33 +1,42 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
+import { MoveRight } from 'lucide-react';
+import styles from './CraftedSection.module.css';
 
 const CraftedSection: React.FC = () => {
   return (
-   
-    <section className="relative w-full py-20 md:py-32 flex items-center justify-center bg-black text-white border-y border-gray-100">
-      
-    
+    <section className={styles.section}>
+      {/* Decorative Elements */}
+      <div className={styles.dot} style={{ top: '20%', left: '10%' }} />
+      <div className={styles.dot} style={{ bottom: '15%', right: '12%' }} />
 
-      <div className="relative z-10 text-center px-4 max-w-3xl">
-     
-        <h2 className="text-3xl md:text-5xl font-serif text-[#1a1a1a] mb-6 tracking-tight">
-          Crafted With Purpose
+      <div className={styles.container}>
+        {/* Subtle Label */}
+        <span className={styles.label}>Est. 2024 — BEMEN</span>
+        
+        {/* Unique Heading */}
+        <h2 className={styles.title}>
+          Crafted With <span className={styles.italic}>Purpose</span> <br /> 
+          & Enduring <span className={styles.italic}>Style</span>
         </h2>
         
-        <p className="text-sm md:text-base mb-10 leading-relaxed font-light tracking-wide max-w-xl mx-auto">
+        {/* Elegant Description */}
+        <p className={styles.description}>
           Every piece is designed to last. We focus on premium materials, 
-          thoughtful construction, and a timeless style that transcends seasons.
+          thoughtful construction, and a timeless aesthetic that transcends 
+          fleeting trends.
         </p>
 
-
-        <Link 
-          href="/shop/all" 
-          className="bg-white px-5 text-black py-3 "
-        >
-          Explore Collection
-        </Link>
+        {/* Unique Action Button */}
+        <div className={styles.btnWrapper}>
+          <Link href="/shop/all" className={styles.button}>
+            Explore Collection 
+            <MoveRight size={16} />
+          </Link>
+        </div>
       </div>
-
     </section>
   );
 };
