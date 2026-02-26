@@ -26,23 +26,15 @@ const NewAndPopular: React.FC = () => {
       setLoading(true);
       const result = await getProducts();
       if (result.success) {
-        const formattedData = result.data.map((item: any) => {
-          // Dynamic Discount Percentage Calculation
-          const originalPrice = item.price || 0;
-          const discountedPrice = item.discountPrice || 0;
-          let discountPercentage = 0;
-
-          if (originalPrice > 0 && discountedPrice > 0 && discountedPrice < originalPrice) {
-            discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
-          }
-
-          return {
-            ...item,
-            _id: item._id?.toString() || String(item.id),
-            images: item.images || (item.image ? [item.image] : []),
-            discountPercentage 
-          };
-        });
+        // ডাটাবেজ থেকে পাওয়া ডাটাকে ফরম্যাট করা
+        const formattedData = result.data.map((item: any) => ({
+          ...item,
+          _id: item._id?.toString() || String(item.id),
+          images: item.images || (item.image ? [item.image] : []),
+          // সংখ্যার ফরম্যাট নিশ্চিত করা
+          price: Number(item.price),
+          discountPrice: item.discountPrice ? Number(item.discountPrice) : null,
+        }));
         setProducts(formattedData);
       }
       setLoading(false);
@@ -69,10 +61,9 @@ const NewAndPopular: React.FC = () => {
             key={cat}
             onClick={() => setSelectedCategory(cat)}
             className={`text-[10px] font-bold px-4 py-1.5 border border-black transition-all cursor-pointer uppercase
-              ${
-                selectedCategory === cat
-                  ? "bg-black text-white"
-                  : "bg-white text-black hover:bg-gray-100"
+              ${selectedCategory === cat
+                ? "bg-black text-white"
+                : "bg-white text-black hover:bg-gray-100"
               }`}
           >
             {cat}
@@ -101,7 +92,6 @@ const NewAndPopular: React.FC = () => {
             </div>
           )}
 
-          {/* View All Products Button */}
           {filteredProducts.length > 0 && (
             <div className="mt-16 flex justify-center">
               <Link

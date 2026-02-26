@@ -12,7 +12,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     if (!product) {
         notFound();
     }
-
+console.log(product);
     return (
         <div className="max-w-5xl mx-auto p-6 md:p-10">
             <header className="mb-10">
@@ -29,6 +29,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
                         name: product.name,
                         description: product.description,
                         price: product.price,
+                        discountPrice: product.discountPrice !== undefined ? product.discountPrice : null,
                         stock: product.stock,
                         category: product.category,
                         images: product.images || [],

@@ -1,36 +1,37 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema({
-  name: { 
-    type: String, 
+  name: {
+    type: String,
     required: [true, "Product name is required"],
-    trim: true 
+    trim: true,
   },
-  price: { 
-    type: Number, 
-    required: [true, "Price is required"] 
+  price: {
+    type: Number,
+    required: [true, "Price is required"],
   },
-  category: { 
-    type: String, 
+  discountPrice: { type: Number, default: null },
+  category: {
+    type: String,
     required: [true, "Category is required"],
-    uppercase: true // Apnar UI-te T-SHIRTS, PANTS uppercase ache tai
+    uppercase: true, // Apnar UI-te T-SHIRTS, PANTS uppercase ache tai
   },
-  description: { 
-    type: String, 
-    required: [true, "Description is required"] 
+  description: {
+    type: String,
+    required: [true, "Description is required"],
   },
-  stock: { 
-    type: Number, 
-    default: 0 
+  stock: {
+    type: Number,
+    default: 0,
   },
   // Multiple images-er jonno string array
-  images: { 
-    type: [String], 
-    required: [true, "At least one image is required"] 
+  images: {
+    type: [String],
+    required: [true, "At least one image is required"],
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
