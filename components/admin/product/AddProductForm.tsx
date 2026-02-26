@@ -118,14 +118,36 @@ console.log(categories);
           </div>
         </div>
 
-        {/* Pricing & Publish (আগের মতো) */}
-        <div className="bg-white p-8 rounded-sm border border-gray-100 shadow-sm space-y-6">
-          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b pb-4">Pricing</h2>
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold text-gray-900 uppercase">Regular Price (৳)</label>
-            <input name="price" type="number" placeholder="৳ 0.00" className="w-full px-4 py-3 border-b border-gray-200 outline-none text-lg font-black text-gray-900" required />
-          </div>
-        </div>
+       {/* Pricing Section */}
+<div className="bg-white p-8 rounded-sm border border-gray-100 shadow-sm space-y-6">
+  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b pb-4">Pricing</h2>
+  
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Regular Price */}
+    <div className="space-y-2">
+      <label className="text-[11px] font-bold text-gray-900 uppercase">Regular Price (৳)</label>
+      <input 
+        name="price" 
+        type="number" 
+        required 
+        placeholder="৳ 0.00" 
+        className="w-full px-4 py-3 border-b border-gray-200 outline-none text-lg font-black text-gray-900 focus:border-black transition-colors" 
+      />
+    </div>
+
+    {/* Discount Price (Optional) */}
+    <div className="space-y-2">
+      <label className="text-[11px] font-bold text-[#c5a47e] uppercase">Discount Price (৳)</label>
+      <input 
+        name="discountPrice" 
+        type="number" 
+        placeholder="Optional" 
+        className="w-full px-4 py-3 border-b border-gray-200 outline-none text-lg font-black text-gray-400 focus:text-black transition-colors" 
+      />
+      
+    </div>
+  </div>
+</div>
 
         <button disabled={isPending} type="submit" className="w-full py-4 bg-black text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all flex items-center justify-center gap-3 disabled:bg-gray-400">
           {isPending ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}

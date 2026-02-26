@@ -3,7 +3,7 @@
 import React, { useState, useTransition, useEffect } from "react";
 import { Save, X, Plus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { updateProduct } from "@/app/actions/productAction"; // Ensure you have this action
+import { updateProduct } from "@/app/actions/productAction"; 
 import toast from "react-hot-toast";
 
 const EditProductForm = ({ product }: { product: any }) => {
@@ -38,13 +38,13 @@ const EditProductForm = ({ product }: { product: any }) => {
   };
 
   const clientAction = async (formData: FormData) => {
-    // Validation: Total images check (existing + new)
+    // Validation: Total images check
     if (existingImages.length === 0 && selectedImages.length === 0) {
       toast.error("Please provide at least one image.");
       return;
     }
 
-    // Append existing images as a JSON string or separate fields
+    // Append existing images as a JSON string
     formData.append("existingImages", JSON.stringify(existingImages));
 
     // Append new files
@@ -99,7 +99,6 @@ const EditProductForm = ({ product }: { product: any }) => {
             Product Media
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Existing Images from DB */}
             {existingImages.map((src, index) => (
               <div key={`old-${index}`} className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden group">
                 <img src={src} alt="existing" className="w-full h-full object-cover" />
@@ -114,7 +113,6 @@ const EditProductForm = ({ product }: { product: any }) => {
               </div>
             ))}
 
-            {/* New Previews */}
             {newPreviews.map((src, index) => (
               <div key={`new-${index}`} className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden group">
                 <img src={src} alt="new-preview" className="w-full h-full object-cover border-2 border-black" />
@@ -168,10 +166,12 @@ const EditProductForm = ({ product }: { product: any }) => {
           </div>
         </div>
 
+        {/* Pricing Section - Discount Price যুক্ত করা হয়েছে */}
         <div className="bg-white p-8 rounded-sm border border-gray-100 shadow-sm space-y-6">
           <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b pb-4">
             Pricing
           </h2>
+          
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-gray-900 uppercase">Regular Price (৳)</label>
             <input
@@ -181,6 +181,19 @@ const EditProductForm = ({ product }: { product: any }) => {
               className="w-full px-4 py-3 border-b border-gray-200 outline-none text-lg font-black text-gray-900"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-[#c5a47e] uppercase">Discount Price (৳)</label>
+            <input
+              name="discountPrice"
+              type="number"
+              defaultValue={product.discountPrice
+                || ""}
+              placeholder="No discount"
+              className="w-full px-4 py-3 border-b border-gray-200 outline-none text-lg font-black text-[#c5a47e] focus:text-black transition-colors"
+            />
+            <p className="text-[9px] text-gray-400 italic">খালি রাখলে ডিসকাউন্ট রিমুভ হয়ে যাবে।</p>
           </div>
         </div>
 

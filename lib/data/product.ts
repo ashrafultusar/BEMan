@@ -1,19 +1,28 @@
-
 "use server";
 
 import { connectDB } from "@/db/dbConfig";
 import Product from "@/models/Product";
 
-
-
-export async function getProducts() {
+export async function getProducts(searchQuery?: string) {
   try {
     await connectDB();
     
-    // Database theke shob product latest order-e fetch kora
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    // Filter Object toiri kora
+    let filter: any = {};
 
-    // Next.js Server Action theke plain object pathate hoy
+    // Jodi search query thake, tobe name ba category-te search korbe
+    if (searchQuery) {
+      filter = {
+        $or: [
+          { name: { $regex: searchQuery, $options: "i" } }, // 'i' means case-insensitive
+          { category: { $regex: searchQuery, $options: "i" } }
+        ]
+      };
+    }
+
+    // Database theke filtered data fetch kora
+    const products = await Product.find(filter).sort({ createdAt: -1 });
+
     return { 
       success: true, 
       data: JSON.parse(JSON.stringify(products)) 
@@ -23,6 +32,7 @@ export async function getProducts() {
     return { success: false, message: "Failed to fetch products", data: [] };
   }
 }
+
 
 
 export async function getProductById(id: string) {
