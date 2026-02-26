@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../../ProductCard/ProductCard";
 import { getProducts } from "@/lib/data/product"; 
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const filterCategories = [
   "ALL",
@@ -25,12 +26,23 @@ const NewAndPopular: React.FC = () => {
       setLoading(true);
       const result = await getProducts();
       if (result.success) {
-        // Data map kore ensure korchi jate _id ebong images property thakei
-        const formattedData = result.data.map((item: any) => ({
-          ...item,
-          _id: item._id?.toString() || String(item.id),
-          images: item.images || (item.image ? [item.image] : [])
-        }));
+        const formattedData = result.data.map((item: any) => {
+          // Dynamic Discount Percentage Calculation
+          const originalPrice = item.price || 0;
+          const discountedPrice = item.discountPrice || 0;
+          let discountPercentage = 0;
+
+          if (originalPrice > 0 && discountedPrice > 0 && discountedPrice < originalPrice) {
+            discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+          }
+
+          return {
+            ...item,
+            _id: item._id?.toString() || String(item.id),
+            images: item.images || (item.image ? [item.image] : []),
+            discountPercentage 
+          };
+        });
         setProducts(formattedData);
       }
       setLoading(false);
@@ -42,7 +54,7 @@ const NewAndPopular: React.FC = () => {
   const filteredProducts =
     selectedCategory === "ALL"
       ? products
-      : products.filter((item) => item.category === selectedCategory);
+      : products.filter((item) => item.category?.toUpperCase() === selectedCategory);
 
   return (
     <section className="bg-white py-12 px-4 max-w-[1400px] mx-auto min-h-[600px]">
@@ -82,10 +94,23 @@ const NewAndPopular: React.FC = () => {
           </div>
 
           {filteredProducts.length === 0 && (
-            <div className="text-center py-20 border border-dashed border-gray-100 rounded">
+            <div className="text-center py-20">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                 No products found in {selectedCategory}
               </p>
+            </div>
+          )}
+
+          {/* View All Products Button */}
+          {filteredProducts.length > 0 && (
+            <div className="mt-16 flex justify-center">
+              <Link
+                href="/shop"
+                className="group flex items-center gap-3 px-10 py-4 bg-black text-white text-[11px] font-bold tracking-[0.2em] uppercase transition-all hover:opacity-90"
+              >
+                View All Products
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           )}
         </>
