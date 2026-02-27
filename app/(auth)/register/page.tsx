@@ -5,6 +5,18 @@ import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { register } from "@/app/actions/auth";
 
+// ১. টাইপ ডিফাইন করা (স্থায়ী সমাধানের জন্য)
+interface RegisterState {
+  error?: {
+    name?: string[];
+    email?: string[];
+    password?: string[];
+    confirmPassword?: string[];
+  };
+  message?: string;
+  success?: boolean;
+}
+
 function RegisterButton() {
   const { pending } = useFormStatus();
 
@@ -20,7 +32,8 @@ function RegisterButton() {
 }
 
 export default function RegisterPage() {
-  const [state, dispatch] = useActionState(register, undefined);
+  // ২. জেনেরিক টাইপ ব্যবহার করা (ActionState | any দিয়ে কভার করা হয়েছে)
+  const [state, dispatch] = useActionState<RegisterState | any, FormData>(register, undefined);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -58,7 +71,8 @@ export default function RegisterPage() {
                     placeholder="Full name"
                   />
                 </div>
-                {state?.errors?.name && <p className="mt-1 text-xs text-red-500">{state.errors.name}</p>}
+                {/* ৩. errors এর পরিবর্তে error ব্যবহার করা হয়েছে */}
+                {state?.error?.name && <p className="mt-1 text-xs text-red-500">{state.error.name[0]}</p>}
               </div>
 
               {/* Email */}
@@ -75,7 +89,7 @@ export default function RegisterPage() {
                     placeholder="you@example.com"
                   />
                 </div>
-                {state?.errors?.email && <p className="mt-1 text-xs text-red-500">{state.errors.email}</p>}
+                {state?.error?.email && <p className="mt-1 text-xs text-red-500">{state.error.email[0]}</p>}
               </div>
 
               {/* Password */}
@@ -99,7 +113,7 @@ export default function RegisterPage() {
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                {state?.errors?.password && <p className="mt-1 text-xs text-red-500">{state.errors.password}</p>}
+                {state?.error?.password && <p className="mt-1 text-xs text-red-500">{state.error.password[0]}</p>}
               </div>
 
               {/* Confirm Password */}
@@ -123,6 +137,7 @@ export default function RegisterPage() {
                     {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
+                {state?.error?.confirmPassword && <p className="mt-1 text-xs text-red-500">{state.error.confirmPassword[0]}</p>}
               </div>
             </div>
 
