@@ -79,9 +79,7 @@ export default function Navbar() {
               />
             </form>
 
-            <button onClick={() => !isLoggedIn && router.push('/login')} className="p-2 text-gray-700 hover:text-black">
-              <User size={22} />
-            </button>
+
 
             <Link href={'/checkout'} className="p-2 text-gray-700 hover:text-black relative">
               <ShoppingBag size={22} />
