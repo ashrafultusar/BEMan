@@ -22,10 +22,19 @@ export const authConfig = {
 
       // ২. লগইন থাকা অবস্থায় লগইন/রেজিস্টার পেজে গেলে রিডাইরেক্ট
       if (isLoggedIn && isAuthRoute) {
-        if (isAdmin) {
-          return Response.redirect(new URL("/bemen-staff-portal", nextUrl));
+        // যদি অ্যাডমিন হয়, তবে সে যেন রেজিস্টার পেজে ঢুকতে পারে (নতুন ইউজার অ্যাড করার জন্য)
+        // শুধুমাত্র /login এর ক্ষেত্রে রিডাইরেক্ট করুন, /register এর ক্ষেত্রে নয়
+        if (nextUrl.pathname.startsWith("/login")) {
+          if (isAdmin) {
+            return Response.redirect(new URL("/bemen-staff-portal", nextUrl));
+          }
+          return Response.redirect(new URL("/", nextUrl));
         }
-        return Response.redirect(new URL("/", nextUrl)); // সাধারণ ইউজার প্রোফাইল নেই তাই হোমে যাবে
+        
+        // অ্যাডমিন ছাড়া অন্য কেউ যদি লগইন থাকা অবস্থায় /register এ যাওয়ার চেষ্টা করে
+        if (!isAdmin) {
+          return Response.redirect(new URL("/", nextUrl));
+        }
       }
 
       return true; // বাকি সব পাবলিক রুট ওপেন

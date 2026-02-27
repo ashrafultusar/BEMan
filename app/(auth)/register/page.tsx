@@ -47,7 +47,7 @@ export default function RegisterPage() {
           <div className="text-center">
             <div className="mx-auto h-14 w-14 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 p-0.5 shadow-lg">
               <div className="flex h-full w-full items-center justify-center rounded-xl bg-white dark:bg-gray-900 text-2xl font-bold text-amber-600 dark:text-amber-400">
-                Izzan
+              B
               </div>
             </div>
             <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">

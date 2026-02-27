@@ -1,8 +1,8 @@
 import React from 'react';
 import { UserCog, UserPlus } from "lucide-react";
-import Link from 'next/link';
 import { getUsers } from '@/lib/data/user'; //
 import AdminTable from '@/components/admin/admin/AdminTable';
+import Link from 'next/link';
 
 export default async function AdminManagementPage() {
   const staffList = await getUsers(); //
@@ -21,12 +21,12 @@ export default async function AdminManagementPage() {
         </div>
         
         <Link 
-          href="/register" 
-          className="flex items-center gap-2 bg-black hover:bg-zinc-800 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg active:scale-95 text-xs uppercase tracking-widest"
-        >
-          <UserPlus size={16} />
-          Add Admin
-        </Link>
+  href="/register" 
+  className="flex items-center gap-2 bg-black hover:bg-zinc-800 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg active:scale-95 text-xs uppercase tracking-widest"
+>
+  <UserPlus size={16} />
+  Add Admin
+</Link>
       </div>
 
       {/* Table Container */}
