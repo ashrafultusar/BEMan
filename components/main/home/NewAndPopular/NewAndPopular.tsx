@@ -102,7 +102,7 @@ const NewAndPopular: React.FC = () => {
           {filteredProducts.length > 0 && (
             <div className="mt-20 flex justify-center">
               <Link
-                href="/shop"
+                href="/shop/all"
                 className="group relative flex items-center gap-4 px-12 py-5 bg-black text-white text-[11px] font-bold tracking-[0.3em] uppercase transition-all overflow-hidden"
               >
                 {/* Visual Background Effect */}
