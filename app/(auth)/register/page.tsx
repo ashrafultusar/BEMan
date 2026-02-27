@@ -1,0 +1,144 @@
+"use client";
+
+import { useState, useActionState } from "react";
+import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import { register } from "@/app/actions/auth";
+
+function RegisterButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="group relative flex w-full justify-center rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-amber-700 hover:to-yellow-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-300 disabled:opacity-50"
+    >
+      {pending ? "Creating account..." : "Create account"}
+    </button>
+  );
+}
+
+export default function RegisterPage() {
+  const [state, dispatch] = useActionState(register, undefined);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-gray-950 dark:via-amber-950 dark:to-yellow-950">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,rgba(245,158,11,0.08)_0%,transparent_25%),radial-gradient(circle_at_85%_30%,rgba(217,119,6,0.07)_0%,transparent_35%)]" />
+
+      <div className="relative flex min-h-screen items-center justify-center px-5 py-12 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-10 rounded-2xl bg-white/70 p-8 shadow-2xl backdrop-blur-xl dark:bg-gray-900/70 border border-white/30 dark:border-gray-700/40">
+          
+          <div className="text-center">
+            <div className="mx-auto h-14 w-14 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 p-0.5 shadow-lg">
+              <div className="flex h-full w-full items-center justify-center rounded-xl bg-white dark:bg-gray-900 text-2xl font-bold text-amber-600 dark:text-amber-400">
+                Izzan
+              </div>
+            </div>
+            <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Create your account
+            </h2>
+          </div>
+
+          <form action={dispatch} className="mt-8 space-y-6">
+            <div className="space-y-4">
+              {/* Full Name */}
+              <div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    className="block w-full rounded-lg border border-gray-300 bg-white/60 pl-11 py-3 text-gray-900 focus:ring-amber-500 dark:bg-gray-800/60 dark:text-white sm:text-sm"
+                    placeholder="Full name"
+                  />
+                </div>
+                {state?.errors?.name && <p className="mt-1 text-xs text-red-500">{state.errors.name}</p>}
+              </div>
+
+              {/* Email */}
+              <div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    className="block w-full rounded-lg border border-gray-300 bg-white/60 pl-11 py-3 text-gray-900 focus:ring-amber-500 dark:bg-gray-800/60 dark:text-white sm:text-sm"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {state?.errors?.email && <p className="mt-1 text-xs text-red-500">{state.errors.email}</p>}
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="block w-full rounded-lg border border-gray-300 bg-white/60 pl-11 py-3 text-gray-900 focus:ring-amber-500 dark:bg-gray-800/60 dark:text-white sm:text-sm"
+                    placeholder="Password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {state?.errors?.password && <p className="mt-1 text-xs text-red-500">{state.errors.password}</p>}
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    className="block w-full rounded-lg border border-gray-300 bg-white/60 pl-11 py-3 text-gray-900 focus:ring-amber-500 dark:bg-gray-800/60 dark:text-white sm:text-sm"
+                    placeholder="Confirm password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {state?.message && <p className="text-sm text-center text-red-500 font-medium">{state.message}</p>}
+
+            <RegisterButton />
+          </form>
+
+          <p className="mt-10 text-center text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?{" "}
+            <a href="/login" className="font-semibold text-amber-600 hover:text-amber-500">
+              Sign in →
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
