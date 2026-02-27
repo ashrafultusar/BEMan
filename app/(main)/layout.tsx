@@ -10,13 +10,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main><SessionProvider>
-      <CartProvider>
-        <Navbar />
-
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-      </CartProvider></SessionProvider>
+    <main>
+      <SessionProvider>
+        <CartProvider>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </CartProvider>
+      </SessionProvider>
     </main>
   );
 }

@@ -26,12 +26,10 @@ const NewAndPopular: React.FC = () => {
       setLoading(true);
       const result = await getProducts();
       if (result.success) {
-        // ডাটাবেজ থেকে পাওয়া ডাটাকে ফরম্যাট করা
         const formattedData = result.data.map((item: any) => ({
           ...item,
           _id: item._id?.toString() || String(item.id),
           images: item.images || (item.image ? [item.image] : []),
-          // সংখ্যার ফরম্যাট নিশ্চিত করা
           price: Number(item.price),
           discountPrice: item.discountPrice ? Number(item.discountPrice) : null,
         }));
@@ -49,21 +47,27 @@ const NewAndPopular: React.FC = () => {
       : products.filter((item) => item.category?.toUpperCase() === selectedCategory);
 
   return (
-    <section className="bg-white py-12 px-4 max-w-[1400px] mx-auto min-h-[600px]">
-      <h2 className="text-center text-sm font-bold tracking-[0.2em] uppercase mb-6 text-black">
-        NEW AND POPULAR
-      </h2>
+    <section className="bg-white py-20 px-4 max-w-[1400px] mx-auto min-h-[600px]">
+      {/* Header with Luxury Gold Tone */}
+      <div className="text-center mb-12">
+        <span className="text-[#c59d5f] text-[10px] tracking-[0.4em] uppercase font-bold">
+          BEMEN Collection
+        </span>
+        <h2 className="text-4xl md:text-5xl text-black font-serif mt-3 uppercase tracking-tight">
+          New & <span className="italic text-[#c59d5f]">Popular</span>
+        </h2>
+      </div>
 
-      {/* Filter Buttons */}
-      <div className="flex flex-wrap justify-center gap-2 mb-10">
+      {/* Filter Buttons - Refined Design */}
+      <div className="flex flex-wrap justify-center gap-3 mb-16">
         {filterCategories.map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`text-[10px] font-bold px-4 py-1.5 border border-black transition-all cursor-pointer uppercase
+            className={`text-[11px] font-bold px-6 py-2 transition-all duration-300 border uppercase tracking-wider
               ${selectedCategory === cat
-                ? "bg-black text-white"
-                : "bg-white text-black hover:bg-gray-100"
+                ? "bg-black text-white border-black"
+                : "bg-transparent text-gray-500 border-gray-100 hover:border-[#c59d5f] hover:text-[#c59d5f]"
               }`}
           >
             {cat}
@@ -73,33 +77,41 @@ const NewAndPopular: React.FC = () => {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="animate-spin text-gray-400" size={32} />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Loading BEMEN Collection...</p>
+          {/* Real Gold Color Loader */}
+          <Loader2 className="animate-spin text-[#c59d5f]" size={40} />
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Loading Collection...</p>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-10 gap-x-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-5">
             {filteredProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <div key={product._id} className="group">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
 
           {filteredProducts.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                No products found in {selectedCategory}
+              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">
+                No products found in <span className="text-black">{selectedCategory}</span>
               </p>
             </div>
           )}
 
           {filteredProducts.length > 0 && (
-            <div className="mt-16 flex justify-center">
+            <div className="mt-20 flex justify-center">
               <Link
                 href="/shop"
-                className="group flex items-center gap-3 px-10 py-4 bg-black text-white text-[11px] font-bold tracking-[0.2em] uppercase transition-all hover:opacity-90"
+                className="group relative flex items-center gap-4 px-12 py-5 bg-black text-white text-[11px] font-bold tracking-[0.3em] uppercase transition-all overflow-hidden"
               >
-                View All Products
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                {/* Visual Background Effect */}
+                <span className="absolute inset-0 w-0 bg-[#c59d5f] transition-all duration-300 group-hover:w-full"></span>
+                
+                <span className="relative z-10 flex items-center gap-4">
+                  Explore Full Shop
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+                </span>
               </Link>
             </div>
           )}
