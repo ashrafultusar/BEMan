@@ -1,7 +1,8 @@
 "use client";
 
+import { logout } from "@/app/actions/auth";
 import {
-  LayoutDashboard,
+  
   ShoppingBag,
   Image as ImageIcon,
   Settings,
@@ -25,9 +26,9 @@ const mainMenuItems = [
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
   { name: "Shipping", icon: Layers, href: "/bemen-staff-portal/shipping" },
   {
-    name: "Administation",
+    name: "Administration", 
     icon: Settings,
-    href: "/bemen-staff-portal/administation",
+    href: "/bemen-staff-portal/admin",      
   },
 ];
 
@@ -163,7 +164,9 @@ export default function Sidebar() {
 
           {/* ===== FOOTER / PROFILE ===== */}
           <div className="p-4 border-t border-white/5">
-            <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
+            <button  onClick={async () => {
+                    await logout();
+                  }} className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
               <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
                 <X size={18} className="cursor-pointer" />
               </div>

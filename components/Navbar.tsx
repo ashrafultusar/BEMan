@@ -132,6 +132,7 @@ export default function Navbar() {
                 <Link href="/bemen-staff-portal" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-6 hover:text-black transition-colors">
                   Dashboard
                 </Link>
+                
               </div>
 
               <div className="space-y-4">
