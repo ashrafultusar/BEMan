@@ -41,13 +41,14 @@ const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
     setCurrentSlide(index);
   };
 
+  // ৩ সেকেন্ড পর পর স্লাইড অটো পরিবর্তন
   useEffect(() => {
-    const timer = setInterval(nextSlide, 6000);
+    const timer = setInterval(nextSlide, 3000); 
     return () => clearInterval(timer);
   }, [nextSlide]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsAnimating(false), 1000);
+    const timer = setTimeout(() => setIsAnimating(false), 800);
     return () => clearTimeout(timer);
   }, [currentSlide]);
 

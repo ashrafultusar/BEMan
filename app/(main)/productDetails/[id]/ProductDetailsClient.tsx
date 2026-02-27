@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ProductCard from "@/components/main/ProductCard/ProductCard";
-import { ArrowLeft, Plus, Minus, Zap, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Zap, ShoppingBag, Phone } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -20,7 +20,6 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
   const [activeImage, setActiveImage] = useState<string>(product.images?.[0] || "/placeholder.jpg");
   const [openSection, setOpenSection] = useState<string | null>("details");
 
-  // --- Logic for Discount & Price ---
   const originalPrice = Number(product.price);
   const salePrice = product.discountPrice ? Number(product.discountPrice) : null;
   const hasDiscount = salePrice !== null && salePrice > 0 && salePrice < originalPrice;
@@ -29,7 +28,6 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
     addToCart({
       _id: product._id,
       name: product.name,
-      // ডিসকাউন্ট থাকলে ডিসকাউন্ট প্রাইস যাবে, নাহলে রেগুলার প্রাইস
       price: hasDiscount ? salePrice! : originalPrice,
       image: product.images[0],
       category: product.category,
@@ -106,7 +104,7 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
                 className="w-full bg-black hover:bg-gray-900 text-white font-bold py-5 rounded-lg transition-all text-[13px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-xl"
               >
                 <Zap size={18} fill="#c5a47e" className="text-[#c5a47e]" />
-                অর্ডার করুন
+                Order Now
               </button>
               
               <button 
@@ -123,18 +121,18 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
               href="tel:01795072200" 
               className="bg-[#e2eeff] text-[#004dc0] text-center py-4 rounded-lg font-bold mb-8 text-sm border border-blue-100 flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors"
             >
-              কল করতে ক্লিক করুন: 01795072200
+              <Phone size={16} /> Call to Order: 01795072200
             </a>
 
             {/* Shipping Rates Table */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Shipping Information</h3>
               <div className="flex justify-between items-center pb-2 border-b border-gray-200">
-                <span className="text-sm font-medium">ঢাকায় ডেলিভারি</span>
+                <span className="text-sm font-medium">Inside Dhaka</span>
                 <span className="text-sm font-bold italic">৳ {shippingRates.insideDhaka}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">ঢাকার বাইরে কুরিয়ার</span>
+                <span className="text-sm font-medium">Outside Dhaka (Courier)</span>
                 <span className="text-sm font-bold italic">৳ {shippingRates.outsideDhaka}</span>
               </div>
             </div>

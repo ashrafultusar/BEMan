@@ -1,5 +1,4 @@
 import { getProductById, getProducts } from "@/lib/data/product";
-
 import { notFound } from "next/navigation";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { getShippingCharges } from "@/lib/data/shipping";
@@ -7,7 +6,7 @@ import { getShippingCharges } from "@/lib/data/shipping";
 export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  // ৩টি রিকোয়েস্ট একসাথে পাঠানো হচ্ছে দ্রুত লোডিংয়ের জন্য
+  // Fetching data in parallel for faster loading
   const [productRes, allProductsRes, shippingRates] = await Promise.all([
     getProductById(id),
     getProducts(),
@@ -20,7 +19,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
 
   const product = productRes.data;
 
-  // রিলেটেড প্রোডাক্ট ফিল্টারিং
+  // Related Products Filtering logic
   const relatedProducts = allProductsRes.success
     ? allProductsRes.data
         .filter((p: any) => p.category === product.category && p._id.toString() !== product._id.toString())
