@@ -39,7 +39,6 @@ export async function register(prevState: any, formData: FormData) {
 
     await connectDB();
 
-    // ইমেইল অলরেডি আছে কি না চেক
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return { message: "Email already exists." };
@@ -47,7 +46,6 @@ export async function register(prevState: any, formData: FormData) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ইউজার তৈরি
     await User.create({
       name,
       email,
@@ -57,7 +55,7 @@ export async function register(prevState: any, formData: FormData) {
 
     return { success: true, message: "Account created successfully." };
 
-  } catch (error) {
+  } catch (error: any) { // টাইপ 'any' বা এরর হ্যান্ডলিং
     console.error("Registration error:", error);
     return { message: "Failed to create account." };
   }
@@ -71,7 +69,7 @@ export async function authenticate(prevState: any, formData: FormData) {
   try {
     await connectDB();
     
-    // সাইন ইন করার চেষ্টা
+    // সাইন ইন
     await signIn("credentials", { 
       email, 
       password, 
@@ -87,16 +85,20 @@ export async function authenticate(prevState: any, formData: FormData) {
           return "Something went wrong.";
       }
     }
-    // Next.js এর ইন্টারনাল রিডাইরেক্ট এরর হ্যান্ডেল করার জন্য এটি জরুরি
-    if (error.message?.includes("NEXT_REDIRECT")) {
+
+    // টাইপস্ক্রিপ্ট এরর ফিক্স: NEXT_REDIRECT চেক করার সময় টাইপ কাস্টিং
+    const errorMessage = (error as Error).message;
+    if (errorMessage?.includes("NEXT_REDIRECT")) {
         throw error;
     }
+    
     return "An unexpected error occurred.";
   }
 
-  // লগইন সফল হলে রোল চেক করে রিডাইরেক্ট
+  // লগইন সফল হলে সেশন থেকে রোল চেক
   const session = await auth();
-  const role = session?.user?.role;
+  const user = session?.user as any; // Role অ্যাক্সেস করার জন্য কাস্টিং
+  const role = user?.role;
 
   if (role === "admin" || role === "moderator") {
     redirect("/bemen-staff-portal");
