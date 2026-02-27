@@ -18,9 +18,9 @@ const Home = () => {
       <Suspense fallback={<ProductSkeleton />}>
         <NewAndPopular />
       </Suspense>
-      <BrandStory/>
+   
       <Testimonials/>
-      <CraftedSection />
+     
     </main>
   );
 };
