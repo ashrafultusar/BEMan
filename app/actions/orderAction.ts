@@ -17,16 +17,17 @@ export async function createOrder(orderData: any) {
       orderId: customOrderId,
       customerName: orderData.customerName,
       phoneNumber: orderData.phoneNumber,
-      altPhoneNumber: orderData.altPhoneNumber, // নতুন যোগ করা হয়েছে
+      altPhoneNumber: orderData.altPhoneNumber,
       address: orderData.address,
-      city: orderData.city, // নতুন যোগ করা হয়েছে
+      city: orderData.city,
       notes: orderData.notes,
       items: orderData.items.map((item: any) => ({
-        productId: item.productId,
+        _id: item._id,        // MongoDB ID
+        productId: item.productId, // Product Code (e.g. BMN-101)
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        size: item.size, // সাইজ এখানে অবশ্যই থাকতে হবে
+        size: item.size,
         image: item.image
       })),
       subtotal: orderData.subtotal,
@@ -37,6 +38,9 @@ export async function createOrder(orderData: any) {
     
     const newOrder = await Order.create(finalOrderData);
     
+    // নতুন অর্ডার আসার পর অ্যাডমিন পোর্টাল আপডেট করা
+    revalidatePath("/bemen-staff-portal/orders");
+
     return { 
       success: true, 
       orderId: newOrder.orderId 

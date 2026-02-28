@@ -4,12 +4,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface CartItem {
   _id: string;
+  productId: string; 
   name: string;
   price: number;
   image: string;
   category: string;
   quantity: number;
-  size: string; // New Field
+  size: string; 
 }
 
 interface CartContextType {
@@ -42,7 +43,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addToCart = (newItem: CartItem) => {
     setCart((prevCart) => {
-      // Check for both ID and Size to avoid merging different sizes
+      // ID এবং Size উভয়ই চেক করা হচ্ছে
       const existingItem = prevCart.find(
         (item) => item._id === newItem._id && item.size === newItem.size
       );
@@ -50,11 +51,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       if (existingItem) {
         return prevCart.map((item) =>
           (item._id === newItem._id && item.size === newItem.size)
-            ? { ...item, quantity: item.quantity + 1 } 
+            ? { ...item, quantity: item.quantity + newItem.quantity } 
             : item
         );
       }
-      return [...prevCart, { ...newItem }];
+      return [...prevCart, newItem];
     });
   };
 
