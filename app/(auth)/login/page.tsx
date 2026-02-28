@@ -1,8 +1,9 @@
 "use client";
 import { authenticate } from "@/app/actions/auth";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, ArrowLeft } from "lucide-react"; // ArrowLeft add kora hoyeche
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link"; // Next.js Link import
 
 function LoginButton() {
   const { pending } = useFormStatus();
@@ -19,12 +20,23 @@ function LoginButton() {
 }
 
 export default function LoginPage() {
-  // useActionState-এর ২য় আর্গুমেন্ট হিসেবে initial state দেওয়া হয়েছে
   const [errorMessage, dispatch] = useActionState(authenticate, undefined);
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-gray-950 dark:via-amber-950 dark:to-yellow-950">
+      {/* Background patterns */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,rgba(245,158,11,0.08)_0%,transparent_25%),radial-gradient(circle_at_85%_30%,rgba(217,119,6,0.07)_0%,transparent_35%)] dark:bg-[radial-gradient(circle_at_15%_50%,rgba(245,158,11,0.12)_0%,transparent_25%),radial-gradient(circle_at_85%_30%,rgba(217,119,6,0.11)_0%,transparent_35%)]" />
+
+      {/* --- Back to Home Button --- */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white/50 backdrop-blur-md border border-white/20 rounded-full shadow-sm hover:bg-white hover:text-amber-600 transition-all duration-300 dark:bg-gray-900/40 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-amber-400"
+        >
+          <ArrowLeft size={16} />
+          <span>Back to Home</span>
+        </Link>
+      </div>
 
       <div className="relative flex min-h-screen items-center justify-center px-5 py-12 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-10 rounded-2xl bg-white/70 p-8 shadow-2xl backdrop-blur-xl dark:bg-gray-900/70 dark:shadow-amber-950/30 sm:p-10 border border-white/30 dark:border-gray-700/40 transition-all duration-500 hover:shadow-3xl hover:scale-[1.005]">
@@ -91,9 +103,9 @@ export default function LoginPage() {
 
           <p className="mt-10 text-center text-sm text-gray-600 dark:text-gray-400">
             Don&apos;t have an account?{" "}
-            <a href="/register" className="font-semibold text-amber-600 hover:text-amber-500">
+            <Link href="/register" className="font-semibold text-amber-600 hover:text-amber-500 transition-colors">
               Create one now →
-            </a>
+            </Link>
           </p>
         </div>
       </div>

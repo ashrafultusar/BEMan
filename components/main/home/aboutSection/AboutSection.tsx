@@ -34,26 +34,21 @@ const AboutSection: React.FC = () => {
 
           <div className="space-y-6 text-gray-400 leading-relaxed text-lg">
             <p>
-              Every piece at BEMEN is a testament to our commitment to excellence. 
-              We believe fashion should be both beautiful and enduring — garments 
-              that feel as good as they look, designed for the modern man who 
-              values quality above all.
+            Most brands try to be everything to everyone. At Bemen, we chose a different path. We believe that to do something perfectly, you must focus. That is why we dedicate ourselves exclusively to men’s essentials.
             </p>
             <p>
-              From sourcing premium fabrics to perfecting every stitch, our 
-              attention to detail ensures that each collection tells a story 
-              of sophistication and style.
+            We noticed a gap in the world of fashion: a sea of fast-fashion "trends" that lack soul and fall apart after three washes. Bemen was born from the desire to return to the roots of masculinity—where clothing was an investment, a statement of intent, and a mark of a gentleman.Wear Bemen to be man. It’s more than a motto; it’s our commitment to helping you show up as the best version of yourself, every single day.
             </p>
           </div>
 
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-white/10">
             <div>
-              <h3 className="text-[#c59d5f] text-2xl font-bold mb-1">10K+</h3>
+              <h3 className="text-[#c59d5f] text-2xl font-bold mb-1">1K+</h3>
               <p className="text-gray-500 uppercase text-xs tracking-tighter">Happy Customers</p>
             </div>
             <div>
-              <h3 className="text-[#c59d5f] text-2xl font-bold mb-1">500+</h3>
+              <h3 className="text-[#c59d5f] text-2xl font-bold mb-1">100+</h3>
               <p className="text-gray-500 uppercase text-xs tracking-tighter">Unique Designs</p>
             </div>
             <div>

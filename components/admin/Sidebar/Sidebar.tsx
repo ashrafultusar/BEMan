@@ -41,19 +41,15 @@ export default function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0f172a] text-white">
-        <div className="flex items-center gap-2">
-          <div className="relative w-10 h-10">
-            <Image
-              src="/assets/logo.jpg"
-              alt="BEMEN Logo"
-              fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-contain"
-            />
-          </div>
-          <span className="text-sm font-bold tracking-widest uppercase italic">
-            BEMEN
-          </span>
-        </div>
+         <div className="relative w-32 md:w-40 h-10 md:h-12">
+                       <Image 
+                         src="/assets/logo.jpeg" 
+                         alt="BEMEN Logo" 
+                         fill 
+                         priority 
+                         className="object-contain" 
+                       />
+                     </div>
         <button
           className="p-2 bg-white/10 rounded-lg"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -79,26 +75,23 @@ export default function Sidebar() {
         <div className="flex flex-col h-full">
           {/* ===== BRAND LOGO ===== */}
           <div className="relative flex items-center gap-3 px-5 py-8">
-            <div className="relative w-10 h-10 shrink-0">
-              <Image
-                src="/assets/logo.jpg"
-                alt="BEMEN Logo"
-                fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-contain invert"
-              />
-            </div>
+              <div className="relative w-32 md:w-40 h-10 md:h-12">
+                            <Image 
+                              src="/assets/logo.jpeg" 
+                              alt="BEMEN Logo" 
+                              fill 
+                              priority 
+                              className="object-contain" 
+                            />
+                          </div>
 
             <div
               className={`${
                 !isOpen && "lg:hidden opacity-0"
               } transition-opacity duration-200 overflow-hidden`}
             >
-              <h1 className="text-xl font-black text-white leading-none tracking-tighter italic">
-                BEMEN
-              </h1>
-              <p className="text-[10px] text-blue-400 mt-1 uppercase tracking-[3px] font-bold">
-                Control Center
-              </p>
+             
+             
             </div>
 
             <button
