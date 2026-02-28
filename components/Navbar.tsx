@@ -2,11 +2,11 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // পাথ ডিটেক্ট করার জন্য
+import { usePathname } from "next/navigation"; 
 import { 
   Menu, X, Search, ShoppingBag, LogOut, 
   ChevronRight, LayoutDashboard, Store, 
-  Mail, Instagram, Facebook 
+  Instagram, Facebook 
 } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
 import { useCart } from "@/context/CartContext"; 
@@ -18,7 +18,7 @@ export default function Navbar() {
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-  const pathname = usePathname(); // বর্তমান ইউআরএল পাথ
+  const pathname = usePathname(); 
 
   const { data: session, status } = useSession();
   const isAdmin = session?.user?.role === "admin"; 
@@ -37,7 +37,6 @@ export default function Navbar() {
     fetchNavbarCats();
   }, []);
 
-  // ফাংশন: চেক করবে লিঙ্কটি অ্যাক্টিভ কি না
   const isActive = (path: string) => pathname === path;
 
   const handleSearch = (e: React.FormEvent) => {
@@ -51,7 +50,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* --- Main Navbar Section --- */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 h-16 md:h-20">
         <div className="mx-auto px-4 h-full flex items-center justify-between">
           
@@ -102,13 +100,11 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* --- Sidebar Overlay --- */}
       <div
         className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"}`}
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* --- Sidebar Menu --- */}
       <div className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col h-full">
           
@@ -123,7 +119,6 @@ export default function Navbar() {
 
           <nav className="flex-1 overflow-y-auto px-4 py-6">
             <div className="space-y-8">
-              
               <div className="space-y-2">
                 <Link 
                   href="/shop/all" 
@@ -180,27 +175,44 @@ export default function Navbar() {
           </nav>
 
           <div className="p-6 border-t bg-gray-50/80 space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Support</p>
-                <p className="text-xs font-semibold text-gray-700">info@bemen.com</p>
-              </div>
-              <div className="flex gap-3">
-                <Instagram size={18} className="text-gray-400 hover:text-pink-600 cursor-pointer" />
-                <Facebook size={18} className="text-gray-400 hover:text-blue-600 cursor-pointer" />
-              </div>
-            </div>
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Support</p>
+      <p className="text-xs font-semibold text-gray-700">bemen2023@gmail.com</p>
+    </div>
+    <div className="flex gap-4">
+      {/* --- Instagram Link with Real Colors --- */}
+      <a 
+        href="https://www.instagram.com/be_men02/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+      >
+        <Instagram size={20} className="text-[#E4405F] transition-transform group-hover:scale-110" />
+      </a>
 
-            {isLoggedIn && (
-              <button 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-red-100 text-red-600 hover:bg-red-50 font-bold text-xs uppercase tracking-widest transition-all"
-              >
-                <LogOut size={16} />
-                Sign Out
-              </button>
-            )}
-          </div>
+      {/* --- Facebook Link with Real Colors --- */}
+      <a 
+        href="https://www.facebook.com/profile.php?id=100091319571968" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+      >
+        <Facebook size={20} className="text-[#1877F2] transition-transform group-hover:scale-110" />
+      </a>
+    </div>
+  </div>
+
+  {isLoggedIn && (
+    <button 
+      onClick={() => signOut({ callbackUrl: '/' })}
+      className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs uppercase tracking-widest transition-all shadow-sm"
+    >
+      <LogOut size={16} className="text-red-600" />
+      Sign Out
+    </button>
+  )}
+</div>
         </div>
       </div>
 
