@@ -54,7 +54,7 @@ const Footer = () => {
     {
       icon: MapPin,
       label: "Address",
-      value: "Mirpur 1 ,ZOO ROAD", 
+      value: "MIRPUR 1 ,ZOO ROAD", 
       href: "#",
       iconColor: "text-red-500",
     },
