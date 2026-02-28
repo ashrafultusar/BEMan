@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     default: "BEMEN | WEAR BEMEN TO BE MEN",
     template: "%s | BEMEN",
   },
+  icons: {
+    icon: "/assets/favicon.jpeg",
+    shortcut: "/assets/favicon.jpeg",
+    apple: "/assets/favicon.jpeg",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/assets/favicon.jpeg",
+    },
+  },
   description:
     "Discover BEMEN's exclusive collection of premium linen shirts, cotton trousers, denim jeans, and plus-size fashion for men. Quality craftsmanship meets modern style.",
   keywords: [
@@ -69,17 +78,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
       >
         <main className="min-h-screen">{children}</main>
-        <Toaster 
-          position="top-center" 
-          reverseOrder={false} 
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
           gutter={8}
           toastOptions={{
             style: {
-              background: '#000',
-              color: '#fff',
-              fontSize: '12px',
-              borderRadius: '8px',
-              padding: '12px 24px',
+              background: "#000",
+              color: "#fff",
+              fontSize: "12px",
+              borderRadius: "8px",
+              padding: "12px 24px",
             },
           }}
         />

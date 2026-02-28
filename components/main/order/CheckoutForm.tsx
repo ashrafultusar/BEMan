@@ -14,6 +14,7 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   const [deliveryCharge, setDeliveryCharge] = useState(initialRates.insideDhaka);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [errors, setErrors] = useState({ phone: false, name: false, address: false }); // Error state
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -29,8 +30,23 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   const total = subtotal + deliveryCharge;
 
   const handleConfirmOrder = async () => {
-    if (!formData.name || !formData.phone || !formData.address) {
+    // ভ্যালিডেশন চেক
+    const isPhoneValid = /^[0-9]{11}$/.test(formData.phone);
+    const isNameValid = formData.name.trim().length > 0;
+    const isAddressValid = formData.address.trim().length > 0;
+
+    setErrors({
+      phone: !isPhoneValid,
+      name: !isNameValid,
+      address: !isAddressValid
+    });
+
+    if (!isNameValid || !isAddressValid) {
       return toast.error("Please fill all required fields!");
+    }
+
+    if (!isPhoneValid) {
+      return toast.error("Mobile number must be exactly 11 digits!");
     }
 
     setLoading(true);
@@ -57,7 +73,6 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
       if (result.success) {
         toast.success("Order Placed Successfully!");
         clearCart();
-        
         router.push(`/order-success/${result.orderId}`);
       } else {
         toast.error(result.message);
@@ -86,7 +101,7 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   }
 
   return (
-    <main className="min-h-screen px-4 md:px-10 mt-16 py-10 bg-gray-50">
+    <main className="min-h-screen px-4 md:px-10  py-10 ">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* LEFT: Shipping Form */}
@@ -96,24 +111,42 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
             <input 
               type="text" 
               placeholder="Full Name *" 
-              className="w-full border p-3 rounded-xl outline-none focus:border-black transition-all"
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+              onChange={(e) => {
+                setFormData({...formData, name: e.target.value});
+                if(e.target.value.length > 0) setErrors(prev => ({...prev, name: false}));
+              }}
             />
-            <input 
-              type="text" 
-              placeholder="Mobile Number *" 
-              className="w-full border p-3 rounded-xl outline-none focus:border-black transition-all"
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-            />
+
+            <div className="relative">
+              <input 
+                type="tel" 
+                placeholder="Mobile Number (11 digits) *" 
+                maxLength={11}
+                value={formData.phone}
+                className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, ''); 
+                  setFormData({...formData, phone: val});
+                  if(val.length === 11) setErrors(prev => ({...prev, phone: false}));
+                }}
+              />
+              {errors.phone && <p className="text-[10px] text-red-500 mt-1 ml-1 font-bold italic">Must be 11 digits</p>}
+            </div>
+
             <input 
               type="text" 
               placeholder="Full Address *" 
-              className="w-full border p-3 rounded-xl outline-none focus:border-black transition-all"
-              onChange={(e) => setFormData({...formData, address: e.target.value})}
+              className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+              onChange={(e) => {
+                setFormData({...formData, address: e.target.value});
+                if(e.target.value.length > 0) setErrors(prev => ({...prev, address: false}));
+              }}
             />
+
             <textarea 
               placeholder="Order Notes (Optional)" 
-              className="w-full border p-3 rounded-xl h-24 outline-none focus:border-black transition-all"
+              className="w-full border border-gray-200 p-3 rounded-xl h-24 outline-none focus:border-black transition-all"
               onChange={(e) => setFormData({...formData, notes: e.target.value})}
             ></textarea>
 

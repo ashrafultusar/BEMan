@@ -2,21 +2,26 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Search, User, ShoppingBag, LogOut } from "lucide-react";
+import { usePathname } from "next/navigation"; 
+import { 
+  Menu, X, Search, ShoppingBag, LogOut, 
+  ChevronRight, LayoutDashboard, Store, 
+  Instagram, Facebook 
+} from "lucide-react";
 import { getCategories } from "@/lib/data/category";
 import { useCart } from "@/context/CartContext"; 
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react"; // NextAuth হুক
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const pathname = usePathname(); 
 
-  // NextAuth থেকে সেশন ডাটা নেওয়া
   const { data: session, status } = useSession();
-  const isAdmin = session?.user?.role === "admin"; // আপনার ডাটাবেজে রোলের নাম 'admin' হলে
+  const isAdmin = session?.user?.role === "admin"; 
   const isLoggedIn = status === "authenticated";
 
   const { cart } = useCart();
@@ -32,6 +37,8 @@ export default function Navbar() {
     fetchNavbarCats();
   }, []);
 
+  const isActive = (path: string) => pathname === path;
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -43,33 +50,35 @@ export default function Navbar() {
 
   return (
     <>
-      {/* --- Main Navbar Section --- */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 h-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 h-16 md:h-20">
         <div className="mx-auto px-4 h-full flex items-center justify-between">
           
           <div className="flex-1 flex items-center">
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 hover:bg-gray-50 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95"
             >
-              <Menu size={24} className="cursor-pointer text-gray-800" />
+              <Menu size={26} className="text-gray-900" />
             </button>
           </div>
 
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-10 h-7">
-                <Image src="/assets/logo.jpg" alt="BEMEN Logo" fill priority sizes="40px" className="object-cover" />
+          <div className="flex-shrink-0 flex justify-center">
+            <Link href="/" className="flex items-center">
+              <div className="relative w-32 md:w-40 h-10 md:h-12">
+                <Image 
+                  src="/assets/logo.jpeg" 
+                  alt="BEMEN Logo" 
+                  fill 
+                  priority 
+                  className="object-contain" 
+                />
               </div>
-              <span className="text-xl font-bold tracking-tighter text-black uppercase font-serif">BEMEN</span>
             </Link>
           </div>
 
           <div className="flex-1 flex items-center justify-end gap-2 md:gap-5">
-            <form onSubmit={handleSearch} className="hidden md:flex items-center border border-gray-200 rounded px-3 py-1.5 focus-within:border-black transition-colors">
-              <button type="submit" className="text-gray-400 hover:text-black">
-                <Search size={18} />
-              </button>
+            <form onSubmit={handleSearch} className="hidden md:flex items-center border border-gray-200 rounded-full px-4 py-1.5 focus-within:border-black transition-all">
+              <Search size={18} className="text-gray-400" />
               <input 
                 type="text" 
                 placeholder='Search...' 
@@ -79,12 +88,10 @@ export default function Navbar() {
               />
             </form>
 
-
-
-            <Link href={'/checkout'} className="p-2 text-gray-700 hover:text-black relative">
-              <ShoppingBag size={22} />
+            <Link href={'/checkout'} className={`p-2 relative transition-colors ${isActive('/checkout') ? 'text-black' : 'text-gray-700 hover:text-black'}`}>
+              <ShoppingBag size={24} />
               {totalItems > 0 && (
-                <span className="absolute top-1 right-1 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-red-600">
+                <span className="absolute top-1 right-1 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-red-600">
                   {totalItems}
                 </span>
               )}
@@ -93,75 +100,123 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* --- Sidebar Overlay --- */}
       <div
-        className={`fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"}`}
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* --- Sidebar Menu --- */}
-      <div className={`fixed top-0 left-0 h-full w-[320px] bg-white z-[110] shadow-2xl transition-transform duration-500 ease-in-out ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col h-full">
-          <div className="p-5 border-b flex justify-between items-center">
-            <span className="font-bold text-black text-lg tracking-widest">MENU</span>
-            <button onClick={() => setMobileOpen(false)} className="p-2">
-              <X size={24} className="cursor-pointer text-gray-600" />
+          
+          <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
+            <div className="relative w-28 h-10">
+                <Image src="/assets/logo.jpeg" alt="BEMEN Logo" fill className="object-contain" />
+            </div>
+            <button onClick={() => setMobileOpen(false)} className="p-2 hover:bg-white rounded-full shadow-sm">
+              <X size={24} className="text-gray-600" />
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto py-6 px-6">
-            <div className="space-y-6">
-              <div>
-                <Link href="/shop/all" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-4 hover:text-black">
-                  Shop All
+          <nav className="flex-1 overflow-y-auto px-4 py-6">
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <Link 
+                  href="/shop/all" 
+                  onClick={() => setMobileOpen(false)} 
+                  className={`flex items-center justify-between group p-3 rounded-xl transition-all ${isActive('/shop/all') ? 'bg-gray-900 text-white' : 'hover:bg-gray-50 text-gray-700'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Store size={20} className={isActive('/shop/all') ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
+                    <span className="text-sm font-bold tracking-widest uppercase">Shop All</span>
+                  </div>
+                  <ChevronRight size={16} className={`${isActive('/shop/all') ? 'text-white' : 'text-gray-300'} transition-transform group-hover:translate-x-1`} />
                 </Link>
 
-                {/* --- কেবল অ্যাডমিন হলে ড্যাশবোর্ড দেখাবে --- */}
                 {isAdmin && (
-                  <Link href="/bemen-staff-portal" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-6 hover:text-black transition-colors">
-                    Dashboard
+                  <Link 
+                    href="/bemen-staff-portal" 
+                    onClick={() => setMobileOpen(false)} 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${isActive('/bemen-staff-portal') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+                  >
+                    <LayoutDashboard size={20} />
+                    <span className="text-sm font-bold tracking-widest uppercase">Dashboard</span>
                   </Link>
                 )}
               </div>
 
               <div className="space-y-4">
-                <p className="text-[10px] font-bold text-zinc-300 tracking-[0.3em] uppercase border-b pb-2">Collections</p>
-                {dynamicCategories.map((cat) => (
-                  <Link
-                    key={cat._id}
-                    href={`/shop/${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="block text-2xl font-bold text-gray-900 hover:text-[#c5a47e] transition-colors lowercase first-letter:uppercase"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+                <div className="flex items-center gap-2 px-3">
+                    <span className="h-[1px] w-6 bg-gray-200"></span>
+                    <p className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">Collections</p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-1">
+                  {dynamicCategories.map((cat) => {
+                    const catPath = `/shop/${cat.name.toLowerCase().replace(/\s+/g, "-")}`;
+                    const active = isActive(catPath);
+                    
+                    return (
+                      <Link
+                        key={cat._id}
+                        href={catPath}
+                        onClick={() => setMobileOpen(false)}
+                        className={`group flex items-center justify-between p-3 rounded-xl transition-all ${active ? 'bg-gray-50 border-l-4 border-black' : 'hover:bg-gray-50'}`}
+                      >
+                        <span className={`text-xl font-medium transition-colors capitalize ${active ? 'text-black font-bold' : 'text-gray-800 group-hover:text-[#c5a47e]'}`}>
+                          {cat.name}
+                        </span>
+                        {active && <div className="w-2 h-2 rounded-full bg-black"></div>}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </nav>
 
-          {/* --- Bottom Section: Support & Logout --- */}
-          <div className="p-6 border-t bg-zinc-50 space-y-4">
-            <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Support</p>
-              <p className="text-xs font-medium text-gray-600">info@bemen.com</p>
-            </div>
+          <div className="p-6 border-t bg-gray-50/80 space-y-6">
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Support</p>
+      <p className="text-xs font-semibold text-gray-700">bemen2023@gmail.com</p>
+    </div>
+    <div className="flex gap-4">
+      {/* --- Instagram Link with Real Colors --- */}
+      <a 
+        href="https://www.instagram.com/be_men02/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+      >
+        <Instagram size={20} className="text-[#E4405F] transition-transform group-hover:scale-110" />
+      </a>
 
-           
-            {isLoggedIn && (
-              <button 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center gap-2 text-red-600 hover:text-red-800 font-bold text-xs uppercase tracking-widest transition-colors"
-              >
-                <LogOut size={16} />
-                Logout
-              </button>
-            )}
-          </div>
+      {/* --- Facebook Link with Real Colors --- */}
+      <a 
+        href="https://www.facebook.com/profile.php?id=100091319571968" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+      >
+        <Facebook size={20} className="text-[#1877F2] transition-transform group-hover:scale-110" />
+      </a>
+    </div>
+  </div>
+
+  {isLoggedIn && (
+    <button 
+      onClick={() => signOut({ callbackUrl: '/' })}
+      className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs uppercase tracking-widest transition-all shadow-sm"
+    >
+      <LogOut size={16} className="text-red-600" />
+      Sign Out
+    </button>
+  )}
+</div>
         </div>
       </div>
 
-      <div className="h-16"></div>
+      <div className="h-16 md:h-20"></div>
     </>
   );
 }
