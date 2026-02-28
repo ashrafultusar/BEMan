@@ -2,14 +2,21 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
-import { 
-  Menu, X, Search, ShoppingBag, LogOut, 
-  ChevronRight, LayoutDashboard, Store, 
-  Instagram, Facebook 
+import { usePathname } from "next/navigation";
+import {
+  Menu,
+  X,
+  Search,
+  ShoppingBag,
+  LogOut,
+  ChevronRight,
+  LayoutDashboard,
+  Store,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
-import { useCart } from "@/context/CartContext"; 
+import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
@@ -18,10 +25,10 @@ export default function Navbar() {
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   const { data: session, status } = useSession();
-  const isAdmin = session?.user?.role === "admin"; 
+  const isAdmin = session?.user?.role === "admin";
   const isLoggedIn = status === "authenticated";
 
   const { cart } = useCart();
@@ -52,7 +59,6 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 h-16 md:h-20">
         <div className="mx-auto px-4 h-full flex items-center justify-between">
-          
           <div className="flex-1 flex items-center">
             <button
               onClick={() => setMobileOpen(true)}
@@ -62,33 +68,46 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="flex-shrink-0 flex justify-center">
+          {/* Logo Container */}
+          <div className="flex-shrink-0 flex justify-center items-center">
             <Link href="/" className="flex items-center">
-              <div className="relative w-32 md:w-40 h-10 md:h-12">
-                <Image 
-                  src="/assets/logo.jpeg" 
-                  alt="BEMEN Logo" 
-                  fill 
-                  priority 
-                  className="object-contain" 
+              <div className="relative w-56 md:w-80 h-16 md:h-24">
+                {/* Mobile: w-56, h-16 | Desktop: w-80, h-24 */}
+                <Image
+                  src="/assets/logo.jpeg"
+                  alt="BEMEN Logo"
+                  fill
+                  priority
+                  className="object-contain scale-110 md:scale-125"
+                  sizes="(max-width: 768px) 224px, 320px"
                 />
               </div>
             </Link>
           </div>
 
           <div className="flex-1 flex items-center justify-end gap-2 md:gap-5">
-            <form onSubmit={handleSearch} className="hidden md:flex items-center border border-gray-200 rounded-full px-4 py-1.5 focus-within:border-black transition-all">
+            <form
+              onSubmit={handleSearch}
+              className="hidden md:flex items-center border border-gray-200 rounded-full px-4 py-1.5 focus-within:border-black transition-all"
+            >
               <Search size={18} className="text-gray-400" />
-              <input 
-                type="text" 
-                placeholder='Search...' 
+              <input
+                type="text"
+                placeholder="Search..."
                 className="ml-2 outline-none text-sm w-32 lg:w-48 bg-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </form>
 
-            <Link href={'/checkout'} className={`p-2 relative transition-colors ${isActive('/checkout') ? 'text-black' : 'text-gray-700 hover:text-black'}`}>
+            <Link
+              href={"/checkout"}
+              className={`p-2 relative transition-colors ${
+                isActive("/checkout")
+                  ? "text-black"
+                  : "text-gray-700 hover:text-black"
+              }`}
+            >
               <ShoppingBag size={24} />
               {totalItems > 0 && (
                 <span className="absolute top-1 right-1 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-red-600">
@@ -101,18 +120,34 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${
+          mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"
+        }`}
         onClick={() => setMobileOpen(false)}
       />
 
-      <div className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <div
+        className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex flex-col h-full">
-          
           <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
-            <div className="relative w-28 h-10">
-                <Image src="/assets/logo.jpeg" alt="BEMEN Logo" fill className="object-contain" />
+            {/* Boro kora hoyeche eikhaney */}
+            <div className="relative w-40 h-16 md:w-48 md:h-20">
+              <Image
+                src="/assets/logo.jpeg"
+                alt="BEMEN Logo"
+                fill
+                className="object-contain object-left scale-110"
+                priority
+              />
             </div>
-            <button onClick={() => setMobileOpen(false)} className="p-2 hover:bg-white rounded-full shadow-sm">
+
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="p-2 hover:bg-white rounded-full shadow-sm"
+            >
               <X size={24} className="text-gray-600" />
             </button>
           </div>
@@ -120,52 +155,92 @@ export default function Navbar() {
           <nav className="flex-1 overflow-y-auto px-4 py-6">
             <div className="space-y-8">
               <div className="space-y-2">
-                <Link 
-                  href="/shop/all" 
-                  onClick={() => setMobileOpen(false)} 
-                  className={`flex items-center justify-between group p-3 rounded-xl transition-all ${isActive('/shop/all') ? 'bg-gray-900 text-white' : 'hover:bg-gray-50 text-gray-700'}`}
+                <Link
+                  href="/shop/all"
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center justify-between group p-3 rounded-xl transition-all ${
+                    isActive("/shop/all")
+                      ? "bg-gray-900 text-white"
+                      : "hover:bg-gray-50 text-gray-700"
+                  }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Store size={20} className={isActive('/shop/all') ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
-                    <span className="text-sm font-bold tracking-widest uppercase">Shop All</span>
+                    <Store
+                      size={20}
+                      className={
+                        isActive("/shop/all")
+                          ? "text-white"
+                          : "text-gray-400 group-hover:text-black"
+                      }
+                    />
+                    <span className="text-sm font-bold tracking-widest uppercase">
+                      Shop All
+                    </span>
                   </div>
-                  <ChevronRight size={16} className={`${isActive('/shop/all') ? 'text-white' : 'text-gray-300'} transition-transform group-hover:translate-x-1`} />
+                  <ChevronRight
+                    size={16}
+                    className={`${
+                      isActive("/shop/all") ? "text-white" : "text-gray-300"
+                    } transition-transform group-hover:translate-x-1`}
+                  />
                 </Link>
 
                 {isAdmin && (
-                  <Link 
-                    href="/bemen-staff-portal" 
-                    onClick={() => setMobileOpen(false)} 
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${isActive('/bemen-staff-portal') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+                  <Link
+                    href="/bemen-staff-portal"
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                      isActive("/bemen-staff-portal")
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    }`}
                   >
                     <LayoutDashboard size={20} />
-                    <span className="text-sm font-bold tracking-widest uppercase">Dashboard</span>
+                    <span className="text-sm font-bold tracking-widest uppercase">
+                      Dashboard
+                    </span>
                   </Link>
                 )}
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 px-3">
-                    <span className="h-[1px] w-6 bg-gray-200"></span>
-                    <p className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">Collections</p>
+                  <span className="h-[1px] w-6 bg-gray-200"></span>
+                  <p className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">
+                    Collections
+                  </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-1">
                   {dynamicCategories.map((cat) => {
-                    const catPath = `/shop/${cat.name.toLowerCase().replace(/\s+/g, "-")}`;
+                    const catPath = `/shop/${cat.name
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`;
                     const active = isActive(catPath);
-                    
+
                     return (
                       <Link
                         key={cat._id}
                         href={catPath}
                         onClick={() => setMobileOpen(false)}
-                        className={`group flex items-center justify-between p-3 rounded-xl transition-all ${active ? 'bg-gray-50 border-l-4 border-black' : 'hover:bg-gray-50'}`}
+                        className={`group flex items-center justify-between p-3 rounded-xl transition-all ${
+                          active
+                            ? "bg-gray-50 border-l-4 border-black"
+                            : "hover:bg-gray-50"
+                        }`}
                       >
-                        <span className={`text-xl font-medium transition-colors capitalize ${active ? 'text-black font-bold' : 'text-gray-800 group-hover:text-[#c5a47e]'}`}>
+                        <span
+                          className={`text-xl font-medium transition-colors capitalize ${
+                            active
+                              ? "text-black font-bold"
+                              : "text-gray-800 group-hover:text-[#c5a47e]"
+                          }`}
+                        >
                           {cat.name}
                         </span>
-                        {active && <div className="w-2 h-2 rounded-full bg-black"></div>}
+                        {active && (
+                          <div className="w-2 h-2 rounded-full bg-black"></div>
+                        )}
                       </Link>
                     );
                   })}
@@ -175,44 +250,54 @@ export default function Navbar() {
           </nav>
 
           <div className="p-6 border-t bg-gray-50/80 space-y-6">
-  <div className="flex items-center justify-between">
-    <div>
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Support</p>
-      <p className="text-xs font-semibold text-gray-700">bemen2023@gmail.com</p>
-    </div>
-    <div className="flex gap-4">
-      {/* --- Instagram Link with Real Colors --- */}
-      <a 
-        href="https://www.instagram.com/be_men02/" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
-      >
-        <Instagram size={20} className="text-[#E4405F] transition-transform group-hover:scale-110" />
-      </a>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                  Support
+                </p>
+                <p className="text-xs font-semibold text-gray-700">
+                  bemen2023@gmail.com
+                </p>
+              </div>
+              <div className="flex gap-4">
+                {/* --- Instagram Link with Real Colors --- */}
+                <a
+                  href="https://www.instagram.com/be_men02/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+                >
+                  <Instagram
+                    size={20}
+                    className="text-[#E4405F] transition-transform group-hover:scale-110"
+                  />
+                </a>
 
-      {/* --- Facebook Link with Real Colors --- */}
-      <a 
-        href="https://www.facebook.com/profile.php?id=100091319571968" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
-      >
-        <Facebook size={20} className="text-[#1877F2] transition-transform group-hover:scale-110" />
-      </a>
-    </div>
-  </div>
+                {/* --- Facebook Link with Real Colors --- */}
+                <a
+                  href="https://www.facebook.com/profile.php?id=100091319571968"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all active:scale-90 group"
+                >
+                  <Facebook
+                    size={20}
+                    className="text-[#1877F2] transition-transform group-hover:scale-110"
+                  />
+                </a>
+              </div>
+            </div>
 
-  {isLoggedIn && (
-    <button 
-      onClick={() => signOut({ callbackUrl: '/' })}
-      className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs uppercase tracking-widest transition-all shadow-sm"
-    >
-      <LogOut size={16} className="text-red-600" />
-      Sign Out
-    </button>
-  )}
-</div>
+            {isLoggedIn && (
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs uppercase tracking-widest transition-all shadow-sm"
+              >
+                <LogOut size={16} className="text-red-600" />
+                Sign Out
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
