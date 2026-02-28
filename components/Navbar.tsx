@@ -6,7 +6,7 @@ import { Menu, X, Search, User, ShoppingBag, LogOut } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
 import { useCart } from "@/context/CartContext"; 
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react"; // NextAuth হুক
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -14,9 +14,8 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  // NextAuth থেকে সেশন ডাটা নেওয়া
   const { data: session, status } = useSession();
-  const isAdmin = session?.user?.role === "admin"; // আপনার ডাটাবেজে রোলের নাম 'admin' হলে
+  const isAdmin = session?.user?.role === "admin"; 
   const isLoggedIn = status === "authenticated";
 
   const { cart } = useCart();
@@ -44,9 +43,10 @@ export default function Navbar() {
   return (
     <>
       {/* --- Main Navbar Section --- */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 h-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 h-16 md:h-20">
         <div className="mx-auto px-4 h-full flex items-center justify-between">
           
+          {/* Left: Menu Button */}
           <div className="flex-1 flex items-center">
             <button
               onClick={() => setMobileOpen(true)}
@@ -56,15 +56,22 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-10 h-7">
-                <Image src="/assets/logo.jpg" alt="BEMEN Logo" fill priority sizes="40px" className="object-cover" />
+          {/* Center: Logo (সঠিকভাবে প্লেস করা হয়েছে) */}
+          <div className="flex-shrink-0 flex justify-center">
+            <Link href="/" className="flex items-center">
+              <div className="relative w-32 md:w-40 h-10 md:h-12">
+                <Image 
+                  src="/assets/logo.jpeg" 
+                  alt="BEMEN Logo" 
+                  fill 
+                  priority 
+                  className="object-contain" // এখানে object-contain ব্যবহার করা হয়েছে যাতে লোগো বিকৃত না হয়
+                />
               </div>
-              <span className="text-xl font-bold tracking-tighter text-black uppercase font-serif">BEMEN</span>
             </Link>
           </div>
 
+          {/* Right: Search & Cart */}
           <div className="flex-1 flex items-center justify-end gap-2 md:gap-5">
             <form onSubmit={handleSearch} className="hidden md:flex items-center border border-gray-200 rounded px-3 py-1.5 focus-within:border-black transition-colors">
               <button type="submit" className="text-gray-400 hover:text-black">
@@ -78,8 +85,6 @@ export default function Navbar() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </form>
-
-
 
             <Link href={'/checkout'} className="p-2 text-gray-700 hover:text-black relative">
               <ShoppingBag size={22} />
@@ -103,7 +108,10 @@ export default function Navbar() {
       <div className={`fixed top-0 left-0 h-full w-[320px] bg-white z-[110] shadow-2xl transition-transform duration-500 ease-in-out ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col h-full">
           <div className="p-5 border-b flex justify-between items-center">
-            <span className="font-bold text-black text-lg tracking-widest">MENU</span>
+            {/* সাইডবারে লোগো */}
+            <div className="relative w-24 h-8">
+                <Image src="/assets/logo.jpeg" alt="BEMEN Logo" fill className="object-contain" />
+            </div>
             <button onClick={() => setMobileOpen(false)} className="p-2">
               <X size={24} className="cursor-pointer text-gray-600" />
             </button>
@@ -116,7 +124,6 @@ export default function Navbar() {
                   Shop All
                 </Link>
 
-                {/* --- কেবল অ্যাডমিন হলে ড্যাশবোর্ড দেখাবে --- */}
                 {isAdmin && (
                   <Link href="/bemen-staff-portal" onClick={() => setMobileOpen(false)} className="block text-sm font-black tracking-[0.2em] uppercase text-gray-400 mb-6 hover:text-black transition-colors">
                     Dashboard
@@ -140,14 +147,12 @@ export default function Navbar() {
             </div>
           </nav>
 
-          {/* --- Bottom Section: Support & Logout --- */}
           <div className="p-6 border-t bg-zinc-50 space-y-4">
             <div>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Support</p>
               <p className="text-xs font-medium text-gray-600">info@bemen.com</p>
             </div>
 
-           
             {isLoggedIn && (
               <button 
                 onClick={() => signOut({ callbackUrl: '/' })}
@@ -161,7 +166,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="h-16"></div>
+      <div className="h-16 md:h-20"></div>
     </>
   );
 }
