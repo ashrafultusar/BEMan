@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, ShoppingCart, Trash2, Plus, Minus, Zap, Loader2 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Trash2, Plus, Minus, Zap, Loader2, User, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
@@ -9,19 +9,27 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orderAction";
 
-export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
+export default function CheckoutForm({ initialRates }: { initialRates: any }) {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const [deliveryCharge, setDeliveryCharge] = useState(initialRates.insideDhaka);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [errors, setErrors] = useState({ phone: false, name: false, address: false }); // Error state
   const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    altPhone: "",
     address: "",
+    city: "",
     notes: ""
+  });
+
+  const [errors, setErrors] = useState({ 
+    phone: false, 
+    name: false, 
+    address: false, 
+    city: false 
   });
 
   useEffect(() => { setMounted(true); }, []);
@@ -29,19 +37,31 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const total = subtotal + deliveryCharge;
 
+  // area change hole charge update hobe
+  const handleAreaChange = (e: any) => {
+    const selectedCity = e.target.value;
+    setFormData({ ...formData, city: selectedCity });
+    if (selectedCity === "Dhaka") {
+      setDeliveryCharge(initialRates.insideDhaka);
+    } else {
+      setDeliveryCharge(initialRates.outsideDhaka);
+    }
+  };
+
   const handleConfirmOrder = async () => {
-    // ভ্যালিডেশন চেক
     const isPhoneValid = /^[0-9]{11}$/.test(formData.phone);
     const isNameValid = formData.name.trim().length > 0;
     const isAddressValid = formData.address.trim().length > 0;
+    const isCityValid = formData.city.length > 0;
 
     setErrors({
       phone: !isPhoneValid,
       name: !isNameValid,
-      address: !isAddressValid
+      address: !isAddressValid,
+      city: !isCityValid
     });
 
-    if (!isNameValid || !isAddressValid) {
+    if (!isNameValid || !isAddressValid || !isCityValid) {
       return toast.error("Please fill all required fields!");
     }
 
@@ -54,13 +74,16 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
     const orderPayload = {
       customerName: formData.name,
       phoneNumber: formData.phone,
+      altPhoneNumber: formData.altPhone,
       address: formData.address,
+      city: formData.city,
       notes: formData.notes,
       items: cart.map(item => ({
         productId: item._id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
+        size: item.size, // Size pathano holo
         image: item.image
       })),
       subtotal,
@@ -101,135 +124,153 @@ export default function CheckoutForm ({ initialRates }: { initialRates: any }) {
   }
 
   return (
-    <main className="min-h-screen px-4 md:px-10  py-10 ">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <main className="min-h-screen px-4 md:px-10 py-10 bg-gray-50/30">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* LEFT: Shipping Form */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="font-bold text-gray-800 mb-6 border-b pb-4 uppercase tracking-wide">Shipping Information</h2>
-          <div className="space-y-4">
-            <input 
-              type="text" 
-              placeholder="Full Name *" 
-              className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
-              onChange={(e) => {
-                setFormData({...formData, name: e.target.value});
-                if(e.target.value.length > 0) setErrors(prev => ({...prev, name: false}));
-              }}
-            />
-
-            <div className="relative">
-              <input 
-                type="tel" 
-                placeholder="Mobile Number (11 digits) *" 
-                maxLength={11}
-                value={formData.phone}
-                className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, ''); 
-                  setFormData({...formData, phone: val});
-                  if(val.length === 11) setErrors(prev => ({...prev, phone: false}));
-                }}
-              />
-              {errors.phone && <p className="text-[10px] text-red-500 mt-1 ml-1 font-bold italic">Must be 11 digits</p>}
+        {/* LEFT: Shipping Form (Design inspired by your image) */}
+        <div className="lg:col-span-7 space-y-6">
+          
+          {/* Contact Section */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 mb-6 text-gray-800">
+                <User size={20} className="text-gray-500" />
+                <h2 className="font-bold uppercase tracking-tight">Contact Information</h2>
             </div>
-
-            <input 
-              type="text" 
-              placeholder="Full Address *" 
-              className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
-              onChange={(e) => {
-                setFormData({...formData, address: e.target.value});
-                if(e.target.value.length > 0) setErrors(prev => ({...prev, address: false}));
-              }}
-            />
-
-            <textarea 
-              placeholder="Order Notes (Optional)" 
-              className="w-full border border-gray-200 p-3 rounded-xl h-24 outline-none focus:border-black transition-all"
-              onChange={(e) => setFormData({...formData, notes: e.target.value})}
-            ></textarea>
-
-            <div className="pt-4 space-y-3">
-              <p className="font-bold text-sm text-gray-500 uppercase tracking-widest">Select Area</p>
-              
-              <div 
-                onClick={() => setDeliveryCharge(initialRates.insideDhaka)}
-                className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all ${deliveryCharge === initialRates.insideDhaka ? 'border-green-500 bg-green-50' : 'border-gray-100'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full border-2 ${deliveryCharge === initialRates.insideDhaka ? 'border-green-500 bg-green-500' : 'border-gray-300'}`} />
-                  <span className="font-bold">Inside Dhaka</span>
-                </div>
-                <span className="font-black">৳ {initialRates.insideDhaka}</span>
+            
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="text-xs font-bold text-gray-500 mb-1 block">Full Name *</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter your full name" 
+                  className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                />
               </div>
 
-              <div 
-                onClick={() => setDeliveryCharge(initialRates.outsideDhaka)}
-                className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all ${deliveryCharge === initialRates.outsideDhaka ? 'border-blue-500 bg-blue-50' : 'border-gray-100'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full border-2 ${deliveryCharge === initialRates.outsideDhaka ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`} />
-                  <span className="font-bold">Outside Dhaka</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 mb-1 block">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    placeholder="01XXXXXXXXX" 
+                    maxLength={11}
+                    className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})}
+                  />
                 </div>
-                <span className="font-black">৳ {initialRates.outsideDhaka}</span>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 mb-1 block">Alt. Phone (Optional)</label>
+                  <input 
+                    type="tel" 
+                    placeholder="01XXXXXXXXX" 
+                    className="w-full border border-gray-200 p-3 rounded-xl outline-none focus:border-black transition-all"
+                    onChange={(e) => setFormData({...formData, altPhone: e.target.value})}
+                  />
+                </div>
               </div>
             </div>
-
-            <button 
-              onClick={handleConfirmOrder}
-              disabled={loading}
-              className="w-full bg-black hover:bg-zinc-800 text-white font-bold py-5 rounded-xl text-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] mt-6 shadow-xl disabled:bg-gray-400"
-            >
-              {loading ? <Loader2 className="animate-spin" /> : <Zap size={20} fill="white" />} 
-              {loading ? "PROCESSING..." : "CONFIRM ORDER"}
-            </button>
           </div>
+
+          {/* Address Section */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 mb-6 text-gray-800">
+                <MapPin size={20} className="text-gray-500" />
+                <h2 className="font-bold uppercase tracking-tight">Shipping Address</h2>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-gray-500 mb-1 block">Detailed Address *</label>
+                <input 
+                  type="text" 
+                  placeholder="House, Road, Area" 
+                  className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-black'}`}
+                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-500 mb-1 block">City / District *</label>
+                <select 
+                  className={`w-full border p-3 rounded-xl outline-none transition-all bg-white ${errors.city ? 'border-red-500' : 'border-gray-200'}`}
+                  onChange={handleAreaChange}
+                >
+                  <option value="">Select City</option>
+                  <option value="Dhaka">Inside Dhaka</option>
+                  <option value="Outside">Outside Dhaka</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-500 mb-1 block">Note for Delivery (Optional)</label>
+                <textarea 
+                  placeholder="Special instructions (optional)" 
+                  className="w-full border border-gray-200 p-3 rounded-xl h-24 outline-none focus:border-black transition-all"
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            onClick={handleConfirmOrder}
+            disabled={loading}
+            className="w-full bg-black hover:bg-zinc-800 text-white font-bold py-5 rounded-xl text-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl disabled:bg-gray-400"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : <Zap size={20} fill="white" />} 
+            {loading ? "PROCESSING..." : "CONFIRM ORDER"}
+          </button>
         </div>
 
         {/* RIGHT: Order Summary */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
-          <h3 className="font-bold text-lg mb-6 border-b pb-4 flex items-center justify-between uppercase tracking-wide">
-            Your Order
-            <span className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-500">{cart.length} Items</span>
-          </h3>
-          
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-            {cart.map((item) => (
-              <div key={item._id} className="flex gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
-                <div className="relative w-16 h-20 flex-shrink-0">
-                  <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover rounded-lg" />
-                </div>
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-bold text-gray-800 text-sm line-clamp-1">{item.name}</h4>
-                    <p className="font-black text-blue-600">৳ {item.price}</p>
+        <div className="lg:col-span-5">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-10">
+            <h3 className="font-bold text-lg mb-6 border-b pb-4 flex items-center justify-between uppercase tracking-wide">
+              Your Order
+              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-500">{cart.length} Items</span>
+            </h3>
+            
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {cart.map((item) => (
+                <div key={`${item._id}-${item.size}`} className="flex gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                  <div className="relative w-16 h-20 flex-shrink-0">
+                    <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover rounded-lg" />
                   </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center bg-white border rounded-lg overflow-hidden">
-                      <button onClick={() => updateQuantity(item._id, 'minus')} className="px-2 py-1 hover:bg-gray-100 transition-colors"><Minus size={12} /></button>
-                      <span className="px-3 font-bold text-xs">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item._id, 'plus')} className="px-2 py-1 hover:bg-gray-100 transition-colors"><Plus size={12} /></button>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-bold text-gray-800 text-sm line-clamp-1">{item.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] bg-black text-white px-2 rounded-full font-bold">SIZE: {item.size}</span>
+                        <p className="font-black text-blue-600">৳ {item.price}</p>
+                      </div>
                     </div>
-                    <button onClick={() => removeFromCart(item._id)} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={16} /></button>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center bg-white border rounded-lg overflow-hidden">
+                        <button onClick={() => updateQuantity(item._id, item.size, 'minus')} className="px-2 py-1 hover:bg-gray-100 transition-colors"><Minus size={12} /></button>
+                        <span className="px-3 font-bold text-xs">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item._id, item.size, 'plus')} className="px-2 py-1 hover:bg-gray-100 transition-colors"><Plus size={12} /></button>
+                      </div>
+                      <button onClick={() => removeFromCart(item._id, item.size)} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={16} /></button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="mt-8 space-y-4 border-t pt-6">
-            <div className="flex justify-between text-gray-500 font-medium">
-              <span>Subtotal</span>
-              <span className="font-bold text-gray-800">৳ {subtotal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-gray-500 font-medium">
-              <span>Delivery Fee</span>
-              <span className="font-bold text-gray-800">৳ {deliveryCharge}</span>
-            </div>
-            <div className="flex justify-between font-black text-2xl text-green-600 pt-4 border-t border-dashed border-gray-300">
-              <span>Grand Total</span>
-              <span>৳ {total.toLocaleString()}</span>
+            <div className="mt-8 space-y-4 border-t pt-6">
+              <div className="flex justify-between text-gray-500 font-medium text-sm">
+                <span>Subtotal</span>
+                <span className="font-bold text-gray-800">৳ {subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-gray-500 font-medium text-sm">
+                <span>Delivery Fee ({formData.city === "Dhaka" ? "Inside Dhaka" : "Outside Dhaka"})</span>
+                <span className="font-bold text-gray-800">৳ {deliveryCharge}</span>
+              </div>
+              <div className="flex justify-between font-black text-2xl text-green-600 pt-4 border-t border-dashed border-gray-300">
+                <span>Total</span>
+                <span>৳ {total.toLocaleString()}</span>
+              </div>
             </div>
           </div>
         </div>

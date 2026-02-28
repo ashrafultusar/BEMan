@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ProductCard from "@/components/main/ProductCard/ProductCard";
-import { ArrowLeft, Plus, Minus, Zap, ShoppingBag, Phone } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Zap, ShoppingBag, Box, Droplets } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -19,6 +19,7 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
   const { addToCart } = useCart();
   const [activeImage, setActiveImage] = useState<string>(product.images?.[0] || "/placeholder.jpg");
   const [openSection, setOpenSection] = useState<string | null>("details");
+  const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || "");
 
   const originalPrice = Number(product.price);
   const salePrice = product.discountPrice ? Number(product.discountPrice) : null;
@@ -26,25 +27,35 @@ export default function ProductDetailsClient({ product, relatedProducts, shippin
   const currentPrice = hasDiscount ? salePrice! : originalPrice;
 
   const handleAddToCart = () => {
+    if (product.sizes?.length > 0 && !selectedSize) {
+      toast.error("Please select a size first!");
+      return;
+    }
+    
     addToCart({
       _id: product._id,
       name: product.name,
       price: currentPrice,
       image: product.images[0],
       category: product.category,
+      size: selectedSize,
       quantity: 1,
     });
-    toast.success("Added to Bag!", { position: "top-center" });
+    toast.success(`${product.name} (${selectedSize}) added!`, { position: "top-center" });
   };
 
   const handleOrderNow = () => {
+    if (product.sizes?.length > 0 && !selectedSize) {
+      toast.error("Please select a size first!");
+      return;
+    }
     handleAddToCart();
     router.push("/checkout");
   };
 
-  // WhatsApp Message dynamic generation
   const whatsappMessage = `Hello BEMEN! I want to order this item:
 Product: ${product.name}
+Size: ${selectedSize}
 Price: ৳${currentPrice.toLocaleString()}
 Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
 
@@ -112,7 +123,32 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                 </div>
             </div>
 
-            {/* Main Action Buttons */}
+            {/* SIZE SELECTOR */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">Select Size</h3>
+                  <span className="text-[10px] text-gray-400 font-bold underline cursor-pointer">Size Guide</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {product.sizes.map((size: string) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`h-12 w-16 flex items-center justify-center rounded-lg border-2 font-bold transition-all text-sm ${
+                        selectedSize === size 
+                        ? "border-black bg-black text-white shadow-lg scale-105" 
+                        : "border-gray-100 text-gray-600 hover:border-gray-300"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* MAIN ACTION BUTTONS */}
             <div className="flex flex-col gap-3 mb-8">
               <button 
                 onClick={handleOrderNow}
@@ -131,9 +167,8 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
               </button>
             </div>
 
-            {/* --- WhatsApp & Call Section (Colorful) --- */}
-            <div >
-              
+            {/* WHATSAPP ORDER */}
+            <div className="mb-8">
                 <a 
                   href={`https://wa.me/8801644044539?text=${encodeURIComponent(whatsappMessage)}`}
                   target="_blank"
@@ -143,37 +178,55 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 7.11 3.017a9.825 9.825 0 013.012 7.103c-.001 5.45-4.435 9.884-9.886 9.884m0-21.867C6.335.003.593 5.746.591 12.879c0 2.28.596 4.505 1.73 6.469L0 24l4.773-1.252a12.637 12.637 0 006.117 1.577h.005c7.032 0 12.75-5.718 12.752-12.75.001-3.407-1.326-6.61-3.737-9.023A12.68 12.68 0 0012.051.006z" />
                   </svg>
-                  Call Now
+                  Order via WhatsApp
                 </a>
-
-              
             </div>
 
-            {/* Shipping Rates Table */}
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Shipping Rates</h3>
+            {/* PRODUCT SPECIFICATIONS */}
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4 shadow-sm mb-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Specifications</h3>
+              
               <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                <span className="flex items-center gap-2 text-sm font-medium text-gray-600 tracking-tight">
+                  <Box size={14} /> Material
+                </span>
+                <span className="text-sm font-black text-gray-900">{product.material || "Quality Fabric"}</span>
+              </div>
+
+              <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                <span className="text-sm font-medium text-gray-600 tracking-tight">Availability</span>
+                <span className={`text-sm font-black ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+                  {product.stock > 0 ? `In Stock (${product.stock})` : "Sold Out"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-600 tracking-tight">Inside Dhaka</span>
                 <span className="text-sm font-black text-gray-900">৳{shippingRates.insideDhaka}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 tracking-tight">Outside Dhaka (Courier)</span>
-                <span className="text-sm font-black text-gray-900">৳{shippingRates.outsideDhaka}</span>
-              </div>
             </div>
 
-            {/* Description Accordion */}
-            <div className="mt-10">
-              <AccordionItem title="Description & Care" isOpen={openSection === "details"} onClick={() => setOpenSection(openSection === "details" ? null : "details")}>
+            {/* ACCORDION SECTIONS */}
+            <div className="mt-4">
+              <AccordionItem title="Description" isOpen={openSection === "details"} onClick={() => setOpenSection(openSection === "details" ? null : "details")}>
                 <div className="text-sm text-gray-600 leading-[1.8] whitespace-pre-line font-medium">
                   {product.description}
                 </div>
               </AccordionItem>
+
+              {product.care && (
+                <AccordionItem title="Care Instructions" isOpen={openSection === "care"} onClick={() => setOpenSection(openSection === "care" ? null : "care")}>
+                  <div className="flex gap-3 text-sm text-gray-600 leading-[1.8] font-medium">
+                    <Droplets size={18} className="shrink-0 text-blue-500" />
+                    <p>{product.care}</p>
+                  </div>
+                </AccordionItem>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Related Products */}
+        {/* RELATED PRODUCTS */}
         <section className="mt-24 border-t border-gray-100 pt-16">
           <div className="flex flex-col items-center mb-12">
                <h2 className="text-2xl font-black tracking-tighter uppercase italic">You May Also Like</h2>
