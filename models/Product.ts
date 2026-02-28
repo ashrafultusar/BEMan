@@ -1,6 +1,12 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema({
+  productId: { 
+    type: String, 
+    required: [true, "Product ID is required"],
+    unique: true,
+    trim: true
+  },
   name: {
     type: String,
     required: [true, "Product name is required"],
@@ -14,7 +20,19 @@ const ProductSchema = new Schema({
   category: {
     type: String,
     required: [true, "Category is required"],
-    uppercase: true, // Apnar UI-te T-SHIRTS, PANTS uppercase ache tai
+    uppercase: true,
+  },
+  sizes: {
+    type: [String],
+    default: [],
+  },
+  material: {
+    type: String,
+    trim: true,
+  },
+  care: {
+    type: String,
+    trim: true,
   },
   description: {
     type: String,
@@ -24,7 +42,7 @@ const ProductSchema = new Schema({
     type: Number,
     default: 0,
   },
-  // Multiple images-er jonno string array
+
   images: {
     type: [String],
     required: [true, "At least one image is required"],

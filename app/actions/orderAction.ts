@@ -14,15 +14,36 @@ export async function createOrder(orderData: any) {
     const customOrderId = `BEMEN-${randomPart}`;
 
     const finalOrderData = {
-      ...orderData,
-      orderId: customOrderId
+      orderId: customOrderId,
+      customerName: orderData.customerName,
+      phoneNumber: orderData.phoneNumber,
+      altPhoneNumber: orderData.altPhoneNumber,
+      address: orderData.address,
+      city: orderData.city,
+      notes: orderData.notes,
+      items: orderData.items.map((item: any) => ({
+        _id: item._id,        // MongoDB ID
+        productId: item.productId, // Product Code (e.g. BMN-101)
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        size: item.size,
+        image: item.image
+      })),
+      subtotal: orderData.subtotal,
+      deliveryCharge: orderData.deliveryCharge,
+      totalAmount: orderData.totalAmount,
+      status: "Pending"
     };
     
     const newOrder = await Order.create(finalOrderData);
     
+    // নতুন অর্ডার আসার পর অ্যাডমিন পোর্টাল আপডেট করা
+    revalidatePath("/bemen-staff-portal/orders");
+
     return { 
       success: true, 
-      orderId: newOrder.orderId // এটি সাকসেস পেজের URL-এ যাবে
+      orderId: newOrder.orderId 
     };
   } catch (error: any) {
     console.error("Order Creation Error:", error);
@@ -36,10 +57,10 @@ export async function createOrder(orderData: any) {
 export async function updateOrderStatus(id: string, status: string) {
   try {
     await connectDB();
-    
+
     const updatedOrder = await Order.findByIdAndUpdate(
-      id, 
-      { status }, 
+      id,
+      { status },
       { new: true }
     );
 
@@ -49,18 +70,20 @@ export async function updateOrderStatus(id: string, status: string) {
 
     // ডাটাবেস আপডেট হওয়ার পর ক্যাশ ক্লিয়ার করা
     revalidatePath("/bemen-staff-portal/orders");
-    
+
     return { success: true, message: "Status updated successfully" };
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to update status" };
+    return {
+      success: false,
+      message: error.message || "Failed to update status",
+    };
   }
 }
 
-// 🔴 অর্ডার ডিলিট
 export async function deleteOrder(id: string) {
   try {
     await connectDB();
-    
+
     const deletedOrder = await Order.findByIdAndDelete(id);
 
     if (!deletedOrder) {
@@ -69,9 +92,12 @@ export async function deleteOrder(id: string) {
 
     // ডাটাবেস থেকে ডিলিট হওয়ার পর ক্যাশ ক্লিয়ার করা
     revalidatePath("/bemen-staff-portal/orders");
-    
+
     return { success: true, message: "Order deleted successfully" };
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to delete order" };
+    return {
+      success: false,
+      message: error.message || "Failed to delete order",
+    };
   }
 }
