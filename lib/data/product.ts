@@ -2,8 +2,10 @@
 
 import { connectDB } from "@/db/dbConfig";
 import Product from "@/models/Product";
+import { unstable_noStore } from "next/cache";
 
 export async function getProducts(searchQuery?: string) {
+  unstable_noStore(); 
   try {
     await connectDB();
     
