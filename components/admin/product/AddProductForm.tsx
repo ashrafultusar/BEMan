@@ -27,17 +27,25 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
   };
 
   const removeImage = (index: number) => {
+    // মেমোরি ফ্রি করার জন্য URL রিভোক করা ভালো
+    URL.revokeObjectURL(previews[index]);
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const clientAction = async (formData: FormData) => {
+    // বিদ্যমান images কি-গুলো ডিলিট করে নতুন করে অ্যারে তৈরি করা
     formData.delete("images");
+
     if (selectedImages.length === 0) {
       toast.error("Please upload at least one image.");
       return;
     }
-    selectedImages.forEach((file) => formData.append("images", file));
+
+    // প্রতিটা ফাইল আলাদা করে 'images' কি-তে অ্যাপেন্ড করা (এতে সার্ভারে অ্যারে হিসেবে যাবে)
+    selectedImages.forEach((file) => {
+      formData.append("images", file);
+    });
 
     startTransition(async () => {
       const result = await createProduct(null, formData);
@@ -51,7 +59,10 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
   };
 
   return (
-    <form action={clientAction} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <form
+      action={clientAction}
+      className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+    >
       {/* LEFT COLUMN: Main Info */}
       <div className="lg:col-span-2 space-y-8">
         <div className="bg-white p-8 rounded-sm border border-gray-100 shadow-sm space-y-6">
@@ -59,7 +70,6 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
             General Information
           </h2>
 
-          {/* Product ID Field */}
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-gray-900 uppercase flex items-center gap-2">
               <Hash size={12} className="text-blue-600" /> Product ID / SKU
@@ -132,8 +142,15 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {previews.map((src, index) => (
-              <div key={index} className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden group">
-                <img src={src} alt="preview" className="w-full h-full object-cover" />
+              <div
+                key={index}
+                className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden group"
+              >
+                <img
+                  src={src}
+                  alt="preview"
+                  className="w-full h-full object-cover"
+                />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
@@ -145,8 +162,18 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
             ))}
             <label className="aspect-[3/4] border-2 border-dashed border-gray-100 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-black transition-all text-gray-300 hover:text-black">
               <Plus size={24} />
-              <span className="text-[9px] font-bold uppercase mt-2">Add Image</span>
-              <input type="file" multiple className="hidden" onChange={handleImageChange} accept="image/*" />
+              <span className="text-[9px] font-bold uppercase mt-2">
+                Add Image
+              </span>
+              {/* name="images" এবং multiple নিশ্চিত করা হয়েছে */}
+              <input
+                name="images"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleImageChange}
+                accept="image/*"
+              />
             </label>
           </div>
         </div>
@@ -160,7 +187,9 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
           </h2>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-gray-900 uppercase">Category</label>
+            <label className="text-[11px] font-bold text-gray-900 uppercase">
+              Category
+            </label>
             <select
               name="category"
               required
@@ -168,7 +197,9 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
-                <option key={cat._id} value={cat.name}>{cat.name}</option>
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
+                </option>
               ))}
             </select>
           </div>
@@ -186,7 +217,9 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-gray-900 uppercase">Inventory Stock</label>
+            <label className="text-[11px] font-bold text-gray-900 uppercase">
+              Inventory Stock
+            </label>
             <input
               name="stock"
               type="number"
@@ -199,10 +232,14 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
 
         {/* Pricing */}
         <div className="bg-white p-8 rounded-sm border border-gray-100 shadow-sm space-y-6">
-          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b pb-4">Pricing</h2>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b pb-4">
+            Pricing
+          </h2>
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-gray-900 uppercase">Regular Price (৳)</label>
+              <label className="text-[11px] font-bold text-gray-900 uppercase">
+                Regular Price (৳)
+              </label>
               <input
                 name="price"
                 type="number"
@@ -212,7 +249,9 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-[#c5a47e] uppercase">Discount Price (৳)</label>
+              <label className="text-[11px] font-bold text-[#c5a47e] uppercase">
+                Discount Price (৳)
+              </label>
               <input
                 name="discountPrice"
                 type="number"
@@ -228,7 +267,11 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
           type="submit"
           className="w-full py-4 bg-black text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all flex items-center justify-center gap-3 disabled:bg-gray-400"
         >
-          {isPending ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+          {isPending ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <Save size={18} />
+          )}
           {isPending ? "Publishing..." : "Publish Product"}
         </button>
       </div>

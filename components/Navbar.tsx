@@ -64,7 +64,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen(true)}
               className="p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95"
             >
-              <Menu size={26} className="text-gray-900" />
+              <Menu size={26} className="cursor-pointer text-gray-900" />
             </button>
           </div>
 
@@ -148,7 +148,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className="p-2 hover:bg-white rounded-full shadow-sm"
             >
-              <X size={24} className="text-gray-600" />
+              <X size={24} className="cursor-pointer text-gray-600" />
             </button>
           </div>
 
