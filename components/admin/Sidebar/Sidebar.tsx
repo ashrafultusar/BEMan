@@ -77,7 +77,7 @@ export default function Sidebar() {
           <div className="relative flex items-center gap-3 px-5 py-8">
               <div className="relative w-32 md:w-40 h-10 md:h-12">
                             <Image 
-                              src="/assets/logo.jpeg" 
+                              src="/assets/logo1.jpeg" 
                               alt="BEMEN Logo" 
                               fill 
                               priority 
