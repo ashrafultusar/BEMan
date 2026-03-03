@@ -9,7 +9,6 @@ export async function createProduct(prevState: any, formData: FormData) {
   try {
     await connectDB();
 
-    // productId রিড করা
     const productId = formData.get("productId") as string;
     const name = formData.get("name") as string;
     const price = formData.get("price") as string;
@@ -21,18 +20,16 @@ export async function createProduct(prevState: any, formData: FormData) {
     const care = formData.get("care") as string;
     const sizesRaw = formData.get("sizes") as string;
 
-    // চেক করা এই ProductId আগে থেকেই ডাটাবেজে আছে কিনা
     const existingProduct = await Product.findOne({ productId });
     if (existingProduct) {
       return { success: false, message: "Error: This Product ID already exists." };
     }
 
-    // সাইজ প্রসেসিং
     const sizes = sizesRaw
       ? sizesRaw.split(",").map((s) => s.trim().toUpperCase()).filter((s) => s !== "")
       : [];
 
-    // ইমেজ হ্যান্ডলিং
+    // একাধিক ইমেজ পাওয়ার জন্য getAll ব্যবহার
     const imageFiles = formData.getAll("images") as File[];
     const validFiles = imageFiles.filter((file) => file.name !== "undefined" && file.size > 0);
 
@@ -40,11 +37,12 @@ export async function createProduct(prevState: any, formData: FormData) {
       return { success: false, message: "Please upload at least one valid image." };
     }
 
+    // সব ইমেজ একসাথে Cloudinary-তে আপলোড করা
     const uploadPromises = validFiles.map((file) => uploadImage(file, "products"));
     const imageUrls = await Promise.all(uploadPromises);
 
     const newProduct = new Product({
-      productId, // স্ট্রিং আইডি সেভ হচ্ছে
+      productId,
       name,
       price: Number(price),
       discountPrice: discountPrice ? Number(discountPrice) : null,

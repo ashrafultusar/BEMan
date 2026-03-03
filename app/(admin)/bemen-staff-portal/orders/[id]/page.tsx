@@ -1,7 +1,7 @@
 import PrintButton from "@/components/admin/Print/PrintButton";
 import InvoicePrint from "@/components/admin/Print/InvoicePrint";
 import { getOrderById } from "@/lib/data/order";
-import { ArrowLeft, Package, User, MapPin, Phone, StickyNote, Globe } from 'lucide-react';
+import { ArrowLeft, Package, User, MapPin, Phone, StickyNote, Globe, Hash } from 'lucide-react';
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -94,11 +94,12 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
               <div className="space-y-2">
                 <p className="text-sm font-bold text-gray-800 flex items-center gap-2">
                     <Globe size={14} className="text-gray-400"/> Area: 
-                    <span className={`px-2 py-0.5 rounded text-[10px] ${order.city === 'Dhaka' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${order.city === 'Dhaka' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
                         {order.city === 'Dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'}
                     </span>
+                    <span className="text-[10px] text-gray-400 font-medium italic">({order.city})</span>
                 </p>
-                <p className="text-sm font-medium text-gray-600 leading-relaxed italic">
+                <p className="text-sm font-medium text-gray-600 leading-relaxed">
                     {order.address}
                 </p>
               </div>
@@ -122,10 +123,13 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
                       )}
                     </div>
                     <div>
-                      <p className="font-black text-sm text-gray-900">{item.name}</p>
-                      <div className="flex items-center gap-3 mt-1">
+                      <p className="font-black text-sm text-gray-900 line-clamp-1">{item.name}</p>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="bg-zinc-200 text-zinc-700 text-[9px] font-black px-1.5 py-0.5 rounded flex items-center gap-1">
+                           <Hash size={10} /> {item.productId}
+                        </span>
                         <span className="bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                           SIZE: {item.size}
+                            SIZE: {item.size}
                         </span>
                         <p className="text-xs text-gray-500 font-bold">৳{item.price} × {item.quantity}</p>
                       </div>
@@ -137,7 +141,7 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* Notes Section (Only shows if exists) */}
+          {/* Notes Section */}
           {order.notes && (
             <div className="px-8 pb-8">
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
@@ -153,7 +157,7 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
 
           {/* Summary Section */}
           <div className="p-8 bg-gray-50 border-t flex flex-col md:flex-row justify-between items-center gap-6">
-             <div className="flex gap-8">
+              <div className="flex gap-8">
                 <div className="text-center md:text-left">
                     <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Subtotal</p>
                     <p className="font-bold text-gray-700">৳{order.subtotal}</p>
@@ -162,16 +166,16 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
                     <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Delivery</p>
                     <p className="font-bold text-gray-700">৳{order.deliveryCharge}</p>
                 </div>
-             </div>
+              </div>
 
-             <div className="text-center md:text-right">
+              <div className="text-center md:text-right">
                 <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Grand Total</p>
                 <p className="text-4xl font-black text-green-600 tracking-tighter">৳{order.totalAmount}</p>
-             </div>
+              </div>
           </div>
         </div>
 
-        {/* 🖨️ Separate Print Component (Size & New data update inside this component too) */}
+        {/* 🖨️ Invoice Print View */}
         <InvoicePrint order={order} />
 
       </div>
