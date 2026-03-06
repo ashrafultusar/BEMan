@@ -12,7 +12,6 @@ interface Slide {
   subtitle: string;
   ctaText: string;
   ctaLink: string;
-  overlay: string;
 }
 
 interface HeroSliderClientProps {
@@ -41,7 +40,6 @@ const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
     setCurrentSlide(index);
   };
 
-  // ৩ সেকেন্ড পর পর স্লাইড অটো পরিবর্তন
   useEffect(() => {
     const timer = setInterval(nextSlide, 3000); 
     return () => clearInterval(timer);
@@ -69,7 +67,8 @@ const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
               sizes="100vw"
               quality={100}
             />
-            <div className={styles.overlay} style={{ background: slide.overlay }} />
+            {/* Overlay class handles the darkness */}
+            <div className={styles.overlay} />
           </div>
 
           <div className={styles.contentWrapper}>

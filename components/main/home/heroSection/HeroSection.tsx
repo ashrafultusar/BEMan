@@ -4,7 +4,7 @@ const HeroSection = () => {
   const slides = [
     {
       id: 1,
-      image: "/assets/banner/banner.jpg",
+      image: "/assets/banner/banner1.png",
       title: "New Collection",
       subtitle: "Timeless Essentials — Spring 2026",
       ctaText: "Shop Now",
@@ -13,7 +13,7 @@ const HeroSection = () => {
     },
     {
       id: 2,
-      image: "/assets/banner/banner2.jpg",
+      image: "/assets/banner/banner2.png",
       title: "Minimal Design",
       subtitle: "Modern Simplicity — Summer 2026",
       ctaText: "Discover More",
@@ -22,7 +22,7 @@ const HeroSection = () => {
     },
     {
       id: 3,
-      image: "/assets/banner/banner3.jpg",
+      image:"/assets/banner/banner3.png",
       title: "Luxury Comfort",
       subtitle: "Premium Fabrics — Limited Edition",
       ctaText: "Explore",
