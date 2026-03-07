@@ -14,7 +14,7 @@ const Footer = () => {
   const quickLinks = [
     { name: "NEW DROPS", href: "/" },
     { name: "SHOP ALL", href: "/shop/all" },
-    { name: "BESTSELLERS", href: "/shop/all" }, // Path adjust kora hoyeche
+    { name: "BESTSELLERS", href: "/shop/all" },
     { name: "SHIRTS", href: "/shop/shirts" },
     { name: "T-SHIRTS | POLO", href: "/shop/t-shirts" },
     { name: "JEANS", href: "/shop/jeans" },
@@ -42,7 +42,7 @@ const Footer = () => {
       label: "Phone",
       value: "01644044539",
       href: "tel:+8801644044539",
-      iconColor: "text-green-500", // WhatsApp/Phone green
+      iconColor: "text-green-500", 
     },
     {
       icon: Mail,
@@ -69,9 +69,9 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-3">
-            <div className="relative w-32 md:w-40 h-10 md:h-12">
+            <div className="relative w-32 md:w-40 h-10  md:h-12 ">
                             <Image 
-                              src="/assets/logo.jpeg" 
+                              src="/assets/logo1.jpeg" 
                               alt="BEMEN Logo" 
                               fill 
                               priority 
