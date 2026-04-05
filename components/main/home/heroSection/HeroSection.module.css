@@ -1,20 +1,35 @@
+/* --- মূল কন্টেইনার (Mobile First) --- */
 .sliderContainer {
   position: relative;
-  height: 75vh; 
   width: 100%;
+  /* মোবাইলে ইমেজের প্রফেশনাল রেশিও বজায় রাখার জন্য */
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background-color: #111;
 }
 
-@media (min-width: 1024px) {
+/* --- Medium Device (Tablets: 768px to 1023px) --- */
+@media (min-width: 768px) and (max-width: 1023px) {
   .sliderContainer {
-    height: 85vh; 
+    aspect-ratio: 16 / 7; /* ট্যাবলেটে সামান্য চ্যাপ্টা দেখাবে */
+    height: auto;
   }
 }
 
+/* --- Large Device (Desktop: 1024px+) --- */
+@media (min-width: 1024px) {
+  .sliderContainer {
+    height: 85vh; /* আপনার আগের ডেস্কটপ হাইট ঠিক রাখা হয়েছে */
+    aspect-ratio: auto;
+  }
+}
+
+/* --- স্লাইড এবং এনিমেশন --- */
 .slide {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
@@ -34,9 +49,10 @@
 
 .slideImage {
   object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
   transition: transform 3s ease-out;
   transform: scale(1.1);
-  /* ইমেজকে সামান্য ডার্ক করা হয়েছে টেক্সট ফোকাস করার জন্য */
   filter: brightness(0.9);
 }
 
@@ -44,11 +60,11 @@
   transform: scale(1);
 }
 
+/* --- ওভারলে --- */
 .overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* নিচ থেকে উপরের দিকে একটি স্মার্ট ডার্ক গ্রেডিয়েন্ট */
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.1) 0%,
@@ -57,6 +73,7 @@
   );
 }
 
+/* --- কন্টেন্ট এরিয়া --- */
 .contentWrapper {
   position: absolute;
   inset: 0;
@@ -80,52 +97,61 @@
   transform: translateY(0);
 }
 
+/* --- টাইপোগ্রাফি (Responsive) --- */
 .title {
   color: #ffffff;
-  font-size: clamp(2.2rem, 7vw, 5rem);
+  font-size: clamp(
+    1.8rem,
+    7vw,
+    5rem
+  ); /* ছোট স্ক্রিনে ফন্ট অটো অ্যাডজাস্ট হবে */
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
-  /* টেক্সট শ্যাডো যা টেক্সটকে ইমেজের ওপর ফুটিয়ে তুলবে */
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
 .subtitle {
   color: rgba(255, 255, 255, 0.95);
-  font-size: clamp(0.85rem, 2.2vw, 1.25rem);
-  font-weight: 400;
+  font-size: clamp(0.7rem, 2.2vw, 1.25rem);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   margin-bottom: 3rem;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* --- বাটন --- */
 .buttonWrapper {
   display: flex;
   justify-content: center;
 }
 
 .ctaButton {
-  padding: 1.2rem 3.8rem;
+  padding: 1rem 3rem;
   background-color: #ffffff;
   color: #000000;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
   text-decoration: none;
   transition: all 0.4s ease;
   border: 1px solid #ffffff;
 }
 
+@media (max-width: 767px) {
+  .ctaButton {
+    padding: 0.7rem 2rem;
+    font-size: 0.75rem;
+  }
+}
+
 .ctaButton:hover {
   background-color: transparent;
   color: #ffffff;
-  transform: translateY(-3px);
 }
 
+/* --- নেভিগেশন এরো --- */
 .navArrow {
   position: absolute;
   top: 50%;
@@ -135,9 +161,8 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
-  cursor: pointer;
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   display: none;
   align-items: center;
   justify-content: center;
@@ -155,17 +180,17 @@
   }
 }
 
-.navArrow:hover {
-  background: #ffffff;
-  color: #000000;
+.prevArrow {
+  left: 40px;
+}
+.nextArrow {
+  right: 40px;
 }
 
-.prevArrow { left: 40px; }
-.nextArrow { right: 40px; }
-
+/* --- ইন্ডিকেটর (নিচের প্রগ্রেস বার) --- */
 .indicators {
   position: absolute;
-  bottom: 40px;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -173,13 +198,20 @@
   z-index: 30;
 }
 
+@media (max-width: 767px) {
+  .indicators {
+    bottom: 15px;
+    gap: 8px;
+  }
+}
+
 .indicator {
-  width: 50px;
+  width: 40px;
   height: 3px;
   background: rgba(255, 255, 255, 0.25);
   border: none;
-  padding: 0;
   cursor: pointer;
+  padding: 0;
 }
 
 .indicatorProgress {
@@ -189,14 +221,14 @@
 }
 
 .activeIndicator .indicatorProgress {
-  animation: progress 3s linear forwards; 
+  animation: progress 3s linear forwards;
 }
 
 @keyframes progress {
-  from { width: 0%; }
-  to { width: 100%; }
-}
-
-@media (max-width: 1023px) and (min-width: 768px) {
-  .sliderContainer { height: 70vh; }
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
