@@ -4,12 +4,12 @@ import ProductCard from "@/components/main/ProductCard/ProductCard";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function CategoryPage({ 
-  params, 
-  searchParams 
-}: { 
+export default async function CategoryPage({
+  params,
+  searchParams
+}: {
   params: Promise<{ category: string }>,
-  searchParams: Promise<{ q?: string }> 
+  searchParams: Promise<{ q?: string }>
 }) {
   const { category } = await params;
   const { q: searchQuery } = await searchParams;
@@ -21,16 +21,17 @@ export default async function CategoryPage({
   const activeCategoryTitle = categoryParam.replace(/-/g, " ").toUpperCase();
 
   let displayProducts = products;
-  if (activeCategoryTitle !== "ALL") {
-    displayProducts = displayProducts.filter((p: any) => 
-      p.category.toUpperCase() === activeCategoryTitle
-    );
+  if (categoryParam !== "all") {
+    displayProducts = displayProducts.filter((p: any) => {
+      const productCategorySlug = (p.category || "").toLowerCase().replace(/\s+/g, "-");
+      return productCategorySlug === categoryParam.toLowerCase();
+    });
   }
 
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-[1400px] mx-auto px-6 py-16 flex flex-col md:flex-row gap-12">
-        
+
         {/* Sidebar - Styled to be more minimal */}
         <aside className="w-full md:w-64 flex-shrink-0 md:sticky md:top-28 h-fit">
           <div className="border-l border-gray-100 pl-6">
@@ -59,8 +60,8 @@ export default async function CategoryPage({
             </div>
 
             {searchQuery && (
-              <Link 
-                href={`/shop/${categoryParam}`} 
+              <Link
+                href={`/shop/${categoryParam}`}
                 className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black border border-black px-6 py-3 hover:bg-black hover:text-white transition-all duration-300"
               >
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
@@ -83,8 +84,8 @@ export default async function CategoryPage({
               <p className="text-gray-400 mb-8 text-[11px] font-bold uppercase tracking-[0.3em]">
                 No pieces found in this collection.
               </p>
-              <Link 
-                href="/shop/all" 
+              <Link
+                href="/shop/all"
                 className="inline-block text-[10px] font-bold text-black border-b border-black pb-1 hover:text-[#c59d5f] hover:border-[#c59d5f] transition-all uppercase tracking-widest"
               >
                 Browse All Collections
