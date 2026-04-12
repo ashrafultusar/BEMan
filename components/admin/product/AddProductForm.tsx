@@ -34,7 +34,6 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
   };
 
   const clientAction = async (formData: FormData) => {
-    // বিদ্যমান images কি-গুলো ডিলিট করে নতুন করে অ্যারে তৈরি করা
     formData.delete("images");
 
     if (selectedImages.length === 0) {
@@ -42,18 +41,55 @@ const AddProductForm = ({ categories }: { categories: Category[] }) => {
       return;
     }
 
-    // প্রতিটা ফাইল আলাদা করে 'images' কি-তে অ্যাপেন্ড করা (এতে সার্ভারে অ্যারে হিসেবে যাবে)
-    selectedImages.forEach((file) => {
-      formData.append("images", file);
-    });
-
     startTransition(async () => {
-      const result = await createProduct(null, formData);
-      if (result.success) {
-        toast.success(result.message);
-        router.push("/bemen-staff-portal/products");
-      } else {
-        toast.error(result.message);
+      try {
+        // 1. Get Cloudinary Signature
+        const signRes = await fetch("/api/cloudinary-sign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ folder: "products" }),
+        });
+
+        if (!signRes.ok) {
+          throw new Error("Failed to get upload signature");
+        }
+
+        const { signature, timestamp, cloudName, apiKey, folder } = await signRes.json();
+
+        // 2. Upload images directly to Cloudinary
+        const uploadPromises = selectedImages.map(async (file) => {
+          const cloudForm = new FormData();
+          cloudForm.append("file", file);
+          cloudForm.append("api_key", apiKey);
+          cloudForm.append("timestamp", timestamp.toString());
+          cloudForm.append("signature", signature);
+          cloudForm.append("folder", folder);
+
+          const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: "POST",
+            body: cloudForm,
+          });
+
+          if (!uploadRes.ok) throw new Error("Image upload failed");
+          const uploadData = await uploadRes.json();
+          return uploadData.secure_url;
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+
+        // 3. Append the uploaded URLs
+        formData.append("imageUrls", JSON.stringify(uploadedUrls));
+
+        // 4. Save Product via Server Action
+        const result = await createProduct(null, formData);
+        if (result.success) {
+          toast.success(result.message);
+          router.push("/bemen-staff-portal/products");
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error: any) {
+        toast.error(error.message || "Failed to process form");
       }
     });
   };
