@@ -29,17 +29,13 @@ export async function createProduct(prevState: any, formData: FormData) {
       ? sizesRaw.split(",").map((s) => s.trim().toUpperCase()).filter((s) => s !== "")
       : [];
 
-    // একাধিক ইমেজ পাওয়ার জন্য getAll ব্যবহার
-    const imageFiles = formData.getAll("images") as File[];
-    const validFiles = imageFiles.filter((file) => file.name !== "undefined" && file.size > 0);
+    // Client-side provided image URLs
+    const imageUrlsRaw = formData.get("imageUrls") as string;
+    const imageUrls: string[] = imageUrlsRaw ? JSON.parse(imageUrlsRaw) : [];
 
-    if (validFiles.length === 0) {
+    if (imageUrls.length === 0) {
       return { success: false, message: "Please upload at least one valid image." };
     }
-
-    // সব ইমেজ একসাথে Cloudinary-তে আপলোড করা
-    const uploadPromises = validFiles.map((file) => uploadImage(file, "products"));
-    const imageUrls = await Promise.all(uploadPromises);
 
     const newProduct = new Product({
       productId,
@@ -88,16 +84,13 @@ export async function updateProduct(id: string, formData: FormData) {
       return { success: false, message: "This Product ID is already assigned to another product." };
     }
 
-    // ইমেজ প্রসেসিং
     const existingImagesRaw = formData.get("existingImages") as string;
     let finalImages: string[] = existingImagesRaw ? JSON.parse(existingImagesRaw) : [];
 
-    const newFiles = formData.getAll("images") as File[];
-    const validNewFiles = newFiles.filter(file => file.name !== "undefined" && file.size > 0);
+    const newImageUrlsRaw = formData.get("newImageUrls") as string;
+    const newImageUrls: string[] = newImageUrlsRaw ? JSON.parse(newImageUrlsRaw) : [];
 
-    if (validNewFiles.length > 0) {
-      const uploadPromises = validNewFiles.map((file) => uploadImage(file, "products"));
-      const newImageUrls = await Promise.all(uploadPromises);
+    if (newImageUrls.length > 0) {
       finalImages = [...finalImages, ...newImageUrls];
     }
 
@@ -141,4 +134,3 @@ export async function deleteProduct(id: string) {
     return { success: false, message: "Something went wrong" };
   }
 }
- 
