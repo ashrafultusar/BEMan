@@ -2,7 +2,6 @@
 
 import { logout } from "@/app/actions/auth";
 import {
-  
   ShoppingBag,
   Image as ImageIcon,
   Settings,
@@ -26,9 +25,9 @@ const mainMenuItems = [
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
   { name: "Shipping", icon: Layers, href: "/bemen-staff-portal/shipping" },
   {
-    name: "Administration", 
+    name: "Administration",
     icon: Settings,
-    href: "/bemen-staff-portal/admin",      
+    href: "/bemen-staff-portal/admin",
   },
 ];
 
@@ -41,15 +40,15 @@ export default function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0f172a] text-white">
-         <div className="relative w-32 md:w-40 h-10 md:h-12">
-                       <Image 
-                         src="/assets/logo.jpeg" 
-                         alt="BEMEN Logo" 
-                         fill 
-                         priority 
-                         className="object-contain" 
-                       />
-                     </div>
+        <div className="relative w-32 md:w-40 h-10 md:h-12">
+          <Image
+            src="/assets/logo.jpeg"
+            alt="BEMEN Logo"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
         <button
           className="p-2 bg-white/10 rounded-lg"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -75,24 +74,21 @@ export default function Sidebar() {
         <div className="flex flex-col h-full">
           {/* ===== BRAND LOGO ===== */}
           <div className="relative flex items-center gap-3 px-5 py-8">
-              <div className="relative w-32 md:w-40 h-10 md:h-12">
-                            <Image 
-                              src="/assets/logo1.jpeg" 
-                              alt="BEMEN Logo" 
-                              fill 
-                              priority 
-                              className="object-contain" 
-                            />
-                          </div>
+            <div className="relative w-32 md:w-40 h-10 md:h-12">
+              <Image
+                src="/assets/logo1.jpeg"
+                alt="BEMEN Logo"
+                fill
+                priority
+                className="object-contain"
+              />
+            </div>
 
             <div
               className={`${
                 !isOpen && "lg:hidden opacity-0"
               } transition-opacity duration-200 overflow-hidden`}
-            >
-             
-             
-            </div>
+            ></div>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -157,9 +153,12 @@ export default function Sidebar() {
 
           {/* ===== FOOTER / PROFILE ===== */}
           <div className="p-4 border-t border-white/5">
-            <button  onClick={async () => {
-                    await logout();
-                  }} className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors">
+            <button
+              onClick={async () => {
+                await logout();
+              }}
+              className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 group transition-colors"
+            >
               <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
                 <X size={18} className="cursor-pointer" />
               </div>
@@ -185,3 +184,4 @@ export default function Sidebar() {
     </>
   );
 }
+ 
