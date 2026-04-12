@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ProductCard from "../../ProductCard/ProductCard";
-import { getProducts } from "@/lib/data/product"; 
+import { getProducts } from "@/lib/data/product";
 import { Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -16,30 +16,13 @@ const filterCategories = [
   "PLUS SIZE",
 ];
 
-const NewAndPopular: React.FC = () => {
+interface NewAndPopularProps {
+  initialProducts: any[];
+}
+
+const NewAndPopular: React.FC<NewAndPopularProps> = ({ initialProducts }) => {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const result = await getProducts();
-      if (result.success) {
-        const formattedData = result.data.map((item: any) => ({
-          ...item,
-          _id: item._id?.toString() || String(item.id),
-          images: item.images || (item.image ? [item.image] : []),
-          price: Number(item.price),
-          discountPrice: item.discountPrice ? Number(item.discountPrice) : null,
-        }));
-        setProducts(formattedData);
-      }
-      setLoading(false);
-    };
-
-    fetchProducts();
-  }, []);
+  const [products, setProducts] = useState<any[]>(initialProducts || []);
 
   const filteredProducts =
     selectedCategory === "ALL"
@@ -75,48 +58,41 @@ const NewAndPopular: React.FC = () => {
         ))}
       </div>
 
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          {/* Real Gold Color Loader */}
-          <Loader2 className="animate-spin text-[#c59d5f]" size={40} />
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Loading Collection...</p>
+
+      <>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-5">
+          {filteredProducts.map((product) => (
+            <div key={product._id} className="group">
+              <ProductCard product={product} />
+            </div>
+          ))}
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-5">
-            {filteredProducts.map((product) => (
-              <div key={product._id} className="group">
-                <ProductCard product={product} />
-              </div>
-            ))}
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">
+              No products found in <span className="text-black">{selectedCategory}</span>
+            </p>
           </div>
+        )}
 
-          {filteredProducts.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">
-                No products found in <span className="text-black">{selectedCategory}</span>
-              </p>
-            </div>
-          )}
+        {filteredProducts.length > 0 && (
+          <div className="mt-20 flex justify-center">
+            <Link
+              href="/shop/all"
+              className="group relative flex items-center gap-4 px-12 py-5 bg-black text-white text-[11px] font-bold tracking-[0.3em] uppercase transition-all overflow-hidden"
+            >
+              {/* Visual Background Effect */}
+              <span className="absolute inset-0 w-0 bg-[#c59d5f] transition-all duration-300 group-hover:w-full"></span>
 
-          {filteredProducts.length > 0 && (
-            <div className="mt-20 flex justify-center">
-              <Link
-                href="/shop/all"
-                className="group relative flex items-center gap-4 px-12 py-5 bg-black text-white text-[11px] font-bold tracking-[0.3em] uppercase transition-all overflow-hidden"
-              >
-                {/* Visual Background Effect */}
-                <span className="absolute inset-0 w-0 bg-[#c59d5f] transition-all duration-300 group-hover:w-full"></span>
-                
-                <span className="relative z-10 flex items-center gap-4">
-                  Explore Full Shop
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
-                </span>
-              </Link>
-            </div>
-          )}
-        </>
-      )}
+              <span className="relative z-10 flex items-center gap-4">
+                Explore Full Shop
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+              </span>
+            </Link>
+          </div>
+        )}
+      </>
     </section>
   );
 };

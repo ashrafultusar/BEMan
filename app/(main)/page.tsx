@@ -7,20 +7,33 @@ import NewAndPopular from "@/components/main/home/NewAndPopular/NewAndPopular";
 import Testimonials from "@/components/main/home/Testimonials/Testimonials";
 import ProductSkeleton from "@/components/main/ProductCard/ProductSkeleton";
 import { Suspense } from "react";
+import { getProducts } from "@/lib/data/product";
 
-const Home = () => {
+const Home = async () => {
+  const result = await getProducts();
+
+  let products = [];
+  if (result.success) {
+    products = result.data.map((item: any) => ({
+      ...item,
+      _id: item._id?.toString() || String(item.id),
+      images: item.images || (item.image ? [item.image] : []),
+      price: Number(item.price),
+      discountPrice: item.discountPrice ? Number(item.discountPrice) : null,
+    }));
+  }
   return (
     <main>
       <HeroSection />
-      <Suspense fallback={<CategorySkeleton/>}>
+      <Suspense fallback={<CategorySkeleton />}>
         <FeaturedCategories />
       </Suspense>
       <Suspense fallback={<ProductSkeleton />}>
-        <NewAndPopular />
+        <NewAndPopular initialProducts={products} />
       </Suspense>
-      <AboutSection/>
-      <Testimonials/>
-      <InstagramFeed/>
+      <AboutSection />
+      <Testimonials />
+      <InstagramFeed />
     </main>
   );
 };
