@@ -54,7 +54,7 @@ export default function ProductDetailsClient({
 
     addToCart({
       _id: product._id,
-      productId: product.productId || "N/A", // প্রোডাক্ট কোড যোগ করা হলো
+      productId: product.productId || "N/A",
       name: product.name,
       price: currentPrice,
       image: product.images[0],
@@ -95,6 +95,7 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
+          {/* Product Images */}
           <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
             <div className="flex md:flex-col gap-3 overflow-x-auto no-scrollbar shrink-0">
               {product.images?.map((img: string, index: number) => (
@@ -137,6 +138,7 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
             </div>
           </div>
 
+          {/* Product Details */}
           <div className="lg:col-span-5 flex flex-col">
             <div className="mb-6">
               <p className="text-amber-600 text-[10px] font-black uppercase tracking-[0.3em] mb-2">
@@ -223,18 +225,11 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
               </a>
             </div>
 
+            {/* Shipping & Stock Info */}
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4 shadow-sm mb-6">
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
-                Specifications
+                Shipping & Availability
               </h3>
-              <div className="flex justify-between items-center pb-3 border-b border-gray-200">
-                <span className="flex items-center gap-2 text-sm font-medium text-gray-600 tracking-tight">
-                  <Box size={14} /> Material
-                </span>
-                <span className="text-sm font-black text-gray-900">
-                  {product.material || "Quality Fabric"}
-                </span>
-              </div>
               <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                 <span className="text-sm font-medium text-gray-600 tracking-tight">
                   Availability
@@ -259,6 +254,7 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
               </div>
             </div>
 
+            {/* Accordion Sections */}
             <div className="mt-4">
               <AccordionItem
                 title="Description"
@@ -271,6 +267,20 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                   {product.description}
                 </div>
               </AccordionItem>
+
+              <AccordionItem
+                title="Material"
+                isOpen={openSection === "material"}
+                onClick={() =>
+                  setOpenSection(openSection === "material" ? null : "material")
+                }
+              >
+                <div className="flex gap-3 text-sm text-gray-600 leading-[1.8] font-medium">
+                  <Box size={18} className="shrink-0 text-amber-600" />
+                  <p>{product.material || "High-quality premium fabric."}</p>
+                </div>
+              </AccordionItem>
+
               {product.care && (
                 <AccordionItem
                   title="Care Instructions"
@@ -289,6 +299,7 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
           </div>
         </div>
 
+        {/* Related Products */}
         <section className="mt-24 border-t border-gray-100 pt-16">
           <div className="flex flex-col items-center mb-12">
             <h2 className="text-2xl font-black tracking-tighter uppercase italic">
