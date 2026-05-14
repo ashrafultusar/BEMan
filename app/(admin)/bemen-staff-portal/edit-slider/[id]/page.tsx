@@ -4,8 +4,9 @@ import EditSliderForm from "@/components/admin/slider/EditSliderForm";
 import { getSliderById } from "@/lib/data/slider";
 import { notFound } from "next/navigation";
 
-export default async function EditSliderPage({ params }: { params: { id: string } }) {
-    const slider = await getSliderById(params.id);
+export default async function EditSliderPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const slider = await getSliderById(id);
 
     if (!slider) {
         notFound();
