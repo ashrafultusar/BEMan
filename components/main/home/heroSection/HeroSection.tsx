@@ -1,64 +1,39 @@
-// import HeroSliderClient from "./HeroSliderClient";
-
-// const HeroSection = () => {
-//   const slides = [
-//     {
-//       id: 1,
-//       image: "/assets/banner/banner1.png",
-//       title: "New Collection",
-//       subtitle: "Timeless Essentials — Spring 2026",
-//       ctaText: "Shop Now",
-//       ctaLink: "/shop/all",
-//       overlay: "linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 60%)"
-//     },
-//     {
-//       id: 2,
-//       image: "/assets/banner/banner2.png",
-//       title: "Minimal Design",
-//       subtitle: "Modern Simplicity — Summer 2026",
-//       ctaText: "Discover More",
-//       ctaLink: "/shop/summer",
-//       overlay: "linear-gradient(to top, rgba(0, 0, 50, 0.6) 0%, rgba(0, 0, 0, 0.1) 60%)"
-//     },
-//     {
-//       id: 3,
-//       image:"/assets/banner/banner3.png",
-//       title: "Luxury Comfort",
-//       subtitle: "Premium Fabrics — Limited Edition",
-//       ctaText: "Explore",
-//       ctaLink: "/shop/luxury",
-//       overlay: "linear-gradient(45deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 80%)"
-//     }
-//   ];
-
-//   return <HeroSliderClient slides={slides} />;
-// };
-
-// export default HeroSection;
-
 
 import HeroSliderClient from "./HeroSliderClient";
+import { getSliders } from "@/lib/data/slider";
 
-const HeroSection = () => {
-  const slides = [
+const HeroSection = async () => {
+  // Fetch sliders from the database
+  const slidersDB = await getSliders();
+
+  // If there are no sliders, either show nothing or show placeholders
+  // We will map DB sliders to what HeroSliderClient expects
+  const slides = slidersDB.map((s: any, i: number) => ({
+    id: s._id.toString(),
+    image: s.image,
+    ctaLink: s.ctaLink,
+  }));
+
+  // Fallback if no sliders in DB
+  const displaySlides = slides.length > 0 ? slides : [
     {
-      id: 1,
-      image: "/assets/banner/banner1.png", // আপনার ইমেজের পাথ
+      id: "1",
+      image: "/assets/banner/banner1.png",
       ctaLink: "/shop/ramadan-special",
     },
     {
-      id: 2,
+      id: "2",
       image: "/assets/banner/banner2.png",
       ctaLink: "/shop/baby-products",
     },
     {
-      id: 3,
+      id: "3",
       image: "/assets/banner/banner3.png",
       ctaLink: "/shop/offers",
     }
   ];
 
-  return <HeroSliderClient slides={slides} />;
+  return <HeroSliderClient slides={displaySlides} />;
 };
 
 export default HeroSection;

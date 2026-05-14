@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -12,8 +13,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "10mb", 
+      bodySizeLimit: "10mb",
     },
-  },};
+  },
+};
 
 export default nextConfig;

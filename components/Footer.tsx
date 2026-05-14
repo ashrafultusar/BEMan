@@ -25,15 +25,15 @@ const Footer = () => {
       icon: Facebook,
       href: "https://www.facebook.com/profile.php?id=100091319571968",
       label: "Facebook",
-      color: "text-[#1877F2]", 
+      color: "text-[#1877F2]",
     },
     {
       icon: Instagram,
       href: "https://www.instagram.com/be_men02/",
       label: "Instagram",
-      color: "text-[#E4405F]", 
+      color: "text-[#E4405F]",
     },
-    
+
   ];
 
   const contactInfo = [
@@ -42,7 +42,7 @@ const Footer = () => {
       label: "Phone",
       value: "01644044539",
       href: "tel:+8801644044539",
-      iconColor: "text-green-500", 
+      iconColor: "text-green-500",
     },
     {
       icon: Mail,
@@ -54,7 +54,7 @@ const Footer = () => {
     {
       icon: MapPin,
       label: "Address",
-      value: "MIRPUR 1 ,ZOO ROAD", 
+      value: "MIRPUR 1 ,ZOO ROAD",
       href: "#",
       iconColor: "text-red-500",
     },
@@ -65,23 +65,24 @@ const Footer = () => {
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          
+
           {/* Brand Section */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-3">
-            <div className="relative w-32 md:w-40 h-10  md:h-12 ">
-                            <Image 
-                              src="/assets/logo1.jpeg" 
-                              alt="BEMEN Logo" 
-                              fill 
-                              priority 
-                              className="object-contain" 
-                            />
-                          </div>
-             
+              <div className="relative w-32 md:w-40 h-10  md:h-12 ">
+                <Image
+                  src="/assets/logo1.jpeg"
+                  alt="BEMEN Logo"
+                  fill
+                  sizes="(max-width: 768px) 128px, 160px"
+                  priority
+                  className="object-contain"
+                />
+              </div>
+
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              Redefining modern fashion with premium quality and timeless designs. 
+              Redefining modern fashion with premium quality and timeless designs.
               Elevate your wardrobe with BEMEN.
             </p>
             <div className="flex gap-3 pt-2">

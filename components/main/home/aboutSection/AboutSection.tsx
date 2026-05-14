@@ -8,9 +8,10 @@ const AboutSection: React.FC = () => {
       {/* Left Side: Image Content */}
       <div className="relative w-full md:w-1/2 h-[400px] md:h-auto">
         <Image
-          src="/assets/brandstory/brandstory.jpg" 
+          src="/assets/brandstory/brandstory.jpg"
           alt="Man walking in city"
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
           priority
         />
@@ -22,11 +23,11 @@ const AboutSection: React.FC = () => {
       <div className="w-full md:w-1/2 bg-[#231f1e] p-8 md:p-16 lg:p-24 flex flex-col justify-center">
         <div className="max-w-xl">
           <div className="w-12 h-0.5 bg-[#c59d5f] mb-6"></div>
-          
+
           <span className="text-[#c59d5f] uppercase tracking-widest text-sm font-semibold mb-4 block">
             Our Story
           </span>
-          
+
           <h2 className="text-4xl md:text-5xl text-white font-serif mb-8 leading-tight">
             Crafted With <br />
             <span className="italic text-[#c59d5f]">Purpose & Passion</span>
@@ -34,10 +35,10 @@ const AboutSection: React.FC = () => {
 
           <div className="space-y-6 text-gray-400 leading-relaxed text-lg">
             <p>
-            Most brands try to be everything to everyone. At Bemen, we chose a different path. We believe that to do something perfectly, you must focus. That is why we dedicate ourselves exclusively to men’s essentials.
+              Most brands try to be everything to everyone. At Bemen, we chose a different path. We believe that to do something perfectly, you must focus. That is why we dedicate ourselves exclusively to men’s essentials.
             </p>
             <p>
-            We noticed a gap in the world of fashion: a sea of fast-fashion "trends" that lack soul and fall apart after three washes. Bemen was born from the desire to return to the roots of masculinity—where clothing was an investment, a statement of intent, and a mark of a gentleman.Wear Bemen to be man. It’s more than a motto; it’s our commitment to helping you show up as the best version of yourself, every single day.
+              We noticed a gap in the world of fashion: a sea of fast-fashion "trends" that lack soul and fall apart after three washes. Bemen was born from the desire to return to the roots of masculinity—where clothing was an investment, a statement of intent, and a mark of a gentleman.Wear Bemen to be man. It’s more than a motto; it’s our commitment to helping you show up as the best version of yourself, every single day.
             </p>
           </div>
 
