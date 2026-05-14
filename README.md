@@ -1,1 +1,1 @@
-Live : https://beman.vercel.app
+Live : thebemen.com
