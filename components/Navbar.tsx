@@ -102,11 +102,10 @@ export default function Navbar() {
 
             <Link
               href={"/checkout"}
-              className={`p-2 relative transition-colors ${
-                isActive("/checkout")
+              className={`p-2 relative transition-colors ${isActive("/checkout")
                   ? "text-black"
                   : "text-gray-700 hover:text-black"
-              }`}
+                }`}
             >
               <ShoppingBag size={24} />
               {totalItems > 0 && (
@@ -120,16 +119,14 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${
-          mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100 " : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setMobileOpen(false)}
       />
 
       <div
-        className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 h-full w-full max-w-[340px] bg-white z-[110] shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
@@ -139,6 +136,7 @@ export default function Navbar() {
                 src="/assets/logo.jpeg"
                 alt="BEMEN Logo"
                 fill
+                sizes="(max-width: 768px) 160px, 192px"
                 className="object-contain object-left scale-110"
                 priority
               />
@@ -158,11 +156,10 @@ export default function Navbar() {
                 <Link
                   href="/shop/all"
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between group p-3 rounded-xl transition-all ${
-                    isActive("/shop/all")
+                  className={`flex items-center justify-between group p-3 rounded-xl transition-all ${isActive("/shop/all")
                       ? "bg-gray-900 text-white"
                       : "hover:bg-gray-50 text-gray-700"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Store
@@ -179,9 +176,8 @@ export default function Navbar() {
                   </div>
                   <ChevronRight
                     size={16}
-                    className={`${
-                      isActive("/shop/all") ? "text-white" : "text-gray-300"
-                    } transition-transform group-hover:translate-x-1`}
+                    className={`${isActive("/shop/all") ? "text-white" : "text-gray-300"
+                      } transition-transform group-hover:translate-x-1`}
                   />
                 </Link>
 
@@ -189,11 +185,10 @@ export default function Navbar() {
                   <Link
                     href="/bemen-staff-portal"
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                      isActive("/bemen-staff-portal")
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${isActive("/bemen-staff-portal")
                         ? "bg-blue-600 text-white"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                    }`}
+                      }`}
                   >
                     <LayoutDashboard size={20} />
                     <span className="text-sm font-bold tracking-widest uppercase">
@@ -223,18 +218,16 @@ export default function Navbar() {
                         key={cat._id}
                         href={catPath}
                         onClick={() => setMobileOpen(false)}
-                        className={`group flex items-center justify-between p-3 rounded-xl transition-all ${
-                          active
+                        className={`group flex items-center justify-between p-3 rounded-xl transition-all ${active
                             ? "bg-gray-50 border-l-4 border-black"
                             : "hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         <span
-                          className={`text-xl font-medium transition-colors capitalize ${
-                            active
+                          className={`text-xl font-medium transition-colors capitalize ${active
                               ? "text-black font-bold"
                               : "text-gray-800 group-hover:text-[#c5a47e]"
-                          }`}
+                            }`}
                         >
                           {cat.name}
                         </span>

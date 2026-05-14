@@ -23,6 +23,7 @@ const mainMenuItems = [
   { name: "Orders", icon: Truck, href: "/bemen-staff-portal/orders" },
   { name: "Products", icon: ShoppingBag, href: "/bemen-staff-portal/products" },
   { name: "Categories", icon: Layers, href: "/bemen-staff-portal/categories" },
+  { name: "Sliders", icon: ImageIcon, href: "/bemen-staff-portal/sliders" },
   { name: "Shipping", icon: Layers, href: "/bemen-staff-portal/shipping" },
   {
     name: "Administration",
@@ -46,6 +47,7 @@ export default function Sidebar() {
             alt="BEMEN Logo"
             fill
             priority
+            sizes="(max-width: 768px) 128px, 160px"
             className="object-contain"
           />
         </div>
@@ -80,14 +82,14 @@ export default function Sidebar() {
                 alt="BEMEN Logo"
                 fill
                 priority
+                sizes="(max-width: 768px) 128px, 160px"
                 className="object-contain"
               />
             </div>
 
             <div
-              className={`${
-                !isOpen && "lg:hidden opacity-0"
-              } transition-opacity duration-200 overflow-hidden`}
+              className={`${!isOpen && "lg:hidden opacity-0"
+                } transition-opacity duration-200 overflow-hidden`}
             ></div>
 
             <button
@@ -103,9 +105,8 @@ export default function Sidebar() {
           {/* ===== NAVIGATION ===== */}
           <div className="flex-1 overflow-y-auto px-4">
             <p
-              className={`text-[10px] uppercase tracking-[3px] text-gray-500 mb-6 mt-2 px-2 font-black ${
-                !isOpen && "lg:hidden"
-              }`}
+              className={`text-[10px] uppercase tracking-[3px] text-gray-500 mb-6 mt-2 px-2 font-black ${!isOpen && "lg:hidden"
+                }`}
             >
               Management
             </p>
@@ -125,23 +126,20 @@ export default function Sidebar() {
                       text-[13px] font-bold uppercase tracking-widest
                       rounded-xl
                       transition-all duration-300
-                      ${
-                        isActive
-                          ? "bg-white text-black shadow-lg shadow-white/5"
-                          : "hover:bg-white/5 hover:text-white"
+                      ${isActive
+                        ? "bg-white text-black shadow-lg shadow-white/5"
+                        : "hover:bg-white/5 hover:text-white"
                       }
                     `}
                   >
                     <item.icon
                       size={20}
-                      className={`shrink-0 ${
-                        isActive ? "text-black" : "text-gray-500"
-                      }`}
+                      className={`shrink-0 ${isActive ? "text-black" : "text-gray-500"
+                        }`}
                     />
                     <span
-                      className={`${
-                        !isOpen && "lg:hidden opacity-0"
-                      } whitespace-nowrap`}
+                      className={`${!isOpen && "lg:hidden opacity-0"
+                        } whitespace-nowrap`}
                     >
                       {item.name}
                     </span>
@@ -163,9 +161,8 @@ export default function Sidebar() {
                 <X size={18} className="cursor-pointer" />
               </div>
               <span
-                className={`text-xs font-bold text-red-500 uppercase tracking-widest ${
-                  !isOpen && "lg:hidden"
-                }`}
+                className={`text-xs font-bold text-red-500 uppercase tracking-widest ${!isOpen && "lg:hidden"
+                  }`}
               >
                 Sign Out
               </span>
@@ -184,4 +181,3 @@ export default function Sidebar() {
     </>
   );
 }
- 
