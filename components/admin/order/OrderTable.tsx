@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Trash2, Loader2, ShoppingCart, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
+import { Eye, Trash2, Loader2, ShoppingCart, CheckCircle, XCircle, Search, Filter, Edit, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,7 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [activeTab, setActiveTab] = useState("Website");
   const router = useRouter();
 
   useEffect(() => {
@@ -22,21 +23,25 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
   // --- Filter Logic ---
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
-      const matchesSearch = 
+      // For old orders without source, treat as Website
+      const source = order.orderSource || "Website";
+      if (source !== activeTab) return false;
+
+      const matchesSearch =
         order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         order.phoneNumber.includes(searchQuery);
-      
+
       const matchesStatus = statusFilter === "All" || order.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [orders, searchQuery, statusFilter]);
+  }, [orders, searchQuery, statusFilter, activeTab]);
 
-  // --- Stats Calculation based on filtered data or total data ---
-  const totalOrders = orders.length;
-  const deliveredOrders = orders.filter(o => o.status.toLowerCase() === 'delivered').length;
-  const cancelledOrders = orders.filter(o => o.status.toLowerCase() === 'cancelled').length;
+  // --- Stats Calculation based on filtered data ---
+  const totalOrders = filteredOrders.length;
+  const deliveredOrders = filteredOrders.filter(o => o.status.toLowerCase() === 'delivered').length;
+  const cancelledOrders = filteredOrders.filter(o => o.status.toLowerCase() === 'cancelled').length;
 
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
@@ -75,29 +80,56 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
 
   return (
     <div className="p-4 md:p-8 bg-[#f9f7f5] min-h-screen space-y-6">
-      
+
+      {/* --- Tabs & Add Button --- */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
+          <button
+            onClick={() => setActiveTab("Website")}
+            className={`flex-1 sm:flex-none px-6 py-2 text-sm font-bold rounded-md transition-all ${activeTab === "Website" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-black"
+              }`}
+          >
+            Website Orders
+          </button>
+          <button
+            onClick={() => setActiveTab("Manual")}
+            className={`flex-1 sm:flex-none px-6 py-2 text-sm font-bold rounded-md transition-all ${activeTab === "Manual" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-black"
+              }`}
+          >
+            Manual Orders
+          </button>
+        </div>
+
+        <Link
+          href="/bemen-staff-portal/orders/add-order"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-all"
+        >
+          <Plus size={18} /> Add Order
+        </Link>
+      </div>
+
       {/* --- Quick Stats --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-4 border border-gray-200 rounded-xl flex items-center gap-4 shadow-sm">
-           <div className="bg-gray-900 text-white p-2 rounded-lg"><ShoppingCart size={20} /></div>
-           <div>
-             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Total Orders</p>
-             <p className="text-xl font-black text-gray-900">{totalOrders}</p>
-           </div>
+          <div className="bg-gray-900 text-white p-2 rounded-lg"><ShoppingCart size={20} /></div>
+          <div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Total Orders</p>
+            <p className="text-xl font-black text-gray-900">{totalOrders}</p>
+          </div>
         </div>
         <div className="bg-white p-4 border border-gray-200 rounded-xl flex items-center gap-4 shadow-sm">
-           <div className="bg-green-600 text-white p-2 rounded-lg"><CheckCircle size={20} /></div>
-           <div>
-             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Delivered</p>
-             <p className="text-xl font-black text-green-600">{deliveredOrders}</p>
-           </div>
+          <div className="bg-green-600 text-white p-2 rounded-lg"><CheckCircle size={20} /></div>
+          <div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Delivered</p>
+            <p className="text-xl font-black text-green-600">{deliveredOrders}</p>
+          </div>
         </div>
         <div className="bg-white p-4 border border-gray-200 rounded-xl flex items-center gap-4 shadow-sm">
-           <div className="bg-red-500 text-white p-2 rounded-lg"><XCircle size={20} /></div>
-           <div>
-             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Cancelled</p>
-             <p className="text-xl font-black text-red-500">{cancelledOrders}</p>
-           </div>
+          <div className="bg-red-500 text-white p-2 rounded-lg"><XCircle size={20} /></div>
+          <div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Cancelled</p>
+            <p className="text-xl font-black text-red-500">{cancelledOrders}</p>
+          </div>
         </div>
       </div>
 
@@ -105,7 +137,7 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 border border-gray-200 rounded-xl shadow-sm">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input 
+          <input
             type="text"
             placeholder="Search by Order ID, Name or Phone..."
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black transition-all"
@@ -116,7 +148,7 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
 
         <div className="flex items-center gap-3 w-full md:w-auto">
           <Filter size={18} className="text-gray-400 hidden sm:block" />
-          <select 
+          <select
             className="w-full md:w-48 px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-sm font-bold text-gray-600 outline-none cursor-pointer"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -150,7 +182,7 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
                     <div className="text-xs text-gray-500">{order.phoneNumber}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <select 
+                    <select
                       value={order.status}
                       onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
                       disabled={loadingId === order._id}
@@ -165,12 +197,17 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
                       <Link href={`/bemen-staff-portal/orders/${order._id}`} className="p-2 bg-gray-100 rounded-lg hover:bg-black hover:text-white transition-all inline-block">
                         <Eye size={16} />
                       </Link>
-                      <button 
+                      {(order.orderSource === "Manual" || activeTab === "Manual") && (
+                        <Link href={`/bemen-staff-portal/orders/edit-order/${order._id}`} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all inline-block">
+                          <Edit size={16} />
+                        </Link>
+                      )}
+                      <button
                         onClick={() => handleDelete(order._id)}
                         disabled={loadingId === order._id}
                         className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
                       >
-                        <Trash2 size={16}/>
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -186,11 +223,11 @@ const OrderTable = ({ initialOrders }: { initialOrders: any[] }) => {
           </div>
         )}
       </div>
-      
+
       <div className="mt-4 md:hidden text-center">
-         <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] animate-pulse">
-           ← Scroll to view more →
-         </p>
+        <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] animate-pulse">
+          ← Scroll to view more →
+        </p>
       </div>
     </div>
   );

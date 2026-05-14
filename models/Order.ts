@@ -11,8 +11,8 @@ const OrderSchema = new Schema(
     notes: { type: String },
     items: [
       {
-        _id: { type: String, required: true }, // Database ID
-        productId: { type: String, required: true }, // Product Code (e.g., BMN-101)
+        _id: { type: String, required: true },
+        productId: { type: String, required: true },
         name: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
@@ -27,6 +27,11 @@ const OrderSchema = new Schema(
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
+    },
+    orderSource: {
+      type: String,
+      enum: ["Website", "Manual"],
+      default: "Website",
     },
   },
   { timestamps: true }

@@ -36,10 +36,10 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
       `}</style>
 
       <div className="max-w-4xl mx-auto">
-        
+
         {/* Actions */}
         <div className="flex justify-between items-center mb-6 no-print">
-          <Link 
+          <Link
             href="/bemen-staff-portal/orders"
             className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors font-bold text-sm uppercase tracking-tight"
           >
@@ -50,7 +50,7 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
 
         {/* 📱 Screen UI */}
         <div className="bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden no-print">
-          
+
           {/* Header */}
           <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white">
             <div>
@@ -58,6 +58,11 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
               <h2 className="text-xl font-black flex items-center gap-2">
                 ID: <span className="text-blue-600 font-mono">{order.orderId}</span>
               </h2>
+              {order.createdAt && (
+                <p className="text-xs text-gray-500 font-bold mt-1.5 flex items-center gap-1.5">
+                  Placed on: {new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}
+                </p>
+              )}
             </div>
             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${statusStyles[order.status] || "bg-gray-100 text-gray-600"}`}>
               {order.status}
@@ -69,19 +74,19 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
             {/* Customer Info */}
             <div className="p-8 border-r border-gray-100 space-y-4">
               <h3 className="flex items-center gap-2 font-bold text-gray-800 uppercase text-[10px] tracking-widest border-b pb-3">
-                <User size={14} className="text-blue-500"/> Customer Info
+                <User size={14} className="text-blue-500" /> Customer Info
               </h3>
               <div>
                 <p className="text-lg font-black text-black">{order.customerName}</p>
                 <div className="mt-2 space-y-1">
-                    <p className="text-sm text-gray-600 font-bold flex items-center gap-2">
-                        <Phone size={14} className="text-gray-400"/> {order.phoneNumber}
+                  <p className="text-sm text-gray-600 font-bold flex items-center gap-2">
+                    <Phone size={14} className="text-gray-400" /> {order.phoneNumber}
+                  </p>
+                  {order.altPhoneNumber && (
+                    <p className="text-xs text-gray-400 font-medium flex items-center gap-2">
+                      <Phone size={12} /> Alt: {order.altPhoneNumber}
                     </p>
-                    {order.altPhoneNumber && (
-                        <p className="text-xs text-gray-400 font-medium flex items-center gap-2">
-                            <Phone size={12} /> Alt: {order.altPhoneNumber}
-                        </p>
-                    )}
+                  )}
                 </div>
               </div>
             </div>
@@ -89,18 +94,18 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
             {/* Shipping Info */}
             <div className="p-8 space-y-4">
               <h3 className="flex items-center gap-2 font-bold text-gray-800 uppercase text-[10px] tracking-widest border-b pb-3">
-                <MapPin size={14} className="text-red-500"/> Shipping Details
+                <MapPin size={14} className="text-red-500" /> Shipping Details
               </h3>
               <div className="space-y-2">
                 <p className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                    <Globe size={14} className="text-gray-400"/> Area: 
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${order.city === 'Dhaka' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                        {order.city === 'Dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'}
-                    </span>
-                    <span className="text-[10px] text-gray-400 font-medium italic">({order.city})</span>
+                  <Globe size={14} className="text-gray-400" /> Area:
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${order.city === 'Dhaka' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                    {order.city === 'Dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'}
+                  </span>
+                  <span className="text-[10px] text-gray-400 font-medium italic">({order.city})</span>
                 </p>
                 <p className="text-sm font-medium text-gray-600 leading-relaxed">
-                    {order.address}
+                  {order.address}
                 </p>
               </div>
             </div>
@@ -109,7 +114,7 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
           {/* Items Section */}
           <div className="p-8">
             <h3 className="flex items-center gap-2 font-bold text-gray-800 uppercase text-[10px] tracking-widest border-b pb-4 mb-4">
-              <Package size={14} className="text-orange-500"/> Items Ordered ({order.items.length})
+              <Package size={14} className="text-orange-500" /> Items Ordered ({order.items.length})
             </h3>
             <div className="space-y-3">
               {order.items.map((item: any, index: number) => (
@@ -126,10 +131,10 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
                       <p className="font-black text-sm text-gray-900 line-clamp-1">{item.name}</p>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         <span className="bg-zinc-200 text-zinc-700 text-[9px] font-black px-1.5 py-0.5 rounded flex items-center gap-1">
-                           <Hash size={10} /> {item.productId}
+                          <Hash size={10} /> {item.productId}
                         </span>
                         <span className="bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                            SIZE: {item.size}
+                          SIZE: {item.size}
                         </span>
                         <p className="text-xs text-gray-500 font-bold">৳{item.price} × {item.quantity}</p>
                       </div>
@@ -144,34 +149,34 @@ export default async function OrderDetails({ params }: { params: Promise<{ id: s
           {/* Notes Section */}
           {order.notes && (
             <div className="px-8 pb-8">
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase text-amber-700 mb-2">
-                        <StickyNote size={14} /> Delivery Instruction/Note
-                    </h4>
-                    <p className="text-sm text-amber-900 font-medium leading-relaxed">
-                        {order.notes}
-                    </p>
-                </div>
+              <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                <h4 className="flex items-center gap-2 text-[10px] font-black uppercase text-amber-700 mb-2">
+                  <StickyNote size={14} /> Delivery Instruction/Note
+                </h4>
+                <p className="text-sm text-amber-900 font-medium leading-relaxed">
+                  {order.notes}
+                </p>
+              </div>
             </div>
           )}
 
           {/* Summary Section */}
           <div className="p-8 bg-gray-50 border-t flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex gap-8">
-                <div className="text-center md:text-left">
-                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Subtotal</p>
-                    <p className="font-bold text-gray-700">৳{order.subtotal}</p>
-                </div>
-                <div className="text-center md:text-left">
-                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Delivery</p>
-                    <p className="font-bold text-gray-700">৳{order.deliveryCharge}</p>
-                </div>
+            <div className="flex gap-8">
+              <div className="text-center md:text-left">
+                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Subtotal</p>
+                <p className="font-bold text-gray-700">৳{order.subtotal}</p>
               </div>
+              <div className="text-center md:text-left">
+                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Delivery</p>
+                <p className="font-bold text-gray-700">৳{order.deliveryCharge}</p>
+              </div>
+            </div>
 
-              <div className="text-center md:text-right">
-                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Grand Total</p>
-                <p className="text-4xl font-black text-green-600 tracking-tighter">৳{order.totalAmount}</p>
-              </div>
+            <div className="text-center md:text-right">
+              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Grand Total</p>
+              <p className="text-4xl font-black text-green-600 tracking-tighter">৳{order.totalAmount}</p>
+            </div>
           </div>
         </div>
 

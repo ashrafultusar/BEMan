@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 export async function createOrder(orderData: any) {
   try {
     await connectDB();
-    
+
     // ইউনিক আইডি জেনারেট (BEMEN-XXXXXX)
     const randomPart = crypto.randomBytes(3).toString("hex").toUpperCase();
     const customOrderId = `BEMEN-${randomPart}`;
@@ -35,21 +35,21 @@ export async function createOrder(orderData: any) {
       totalAmount: orderData.totalAmount,
       status: "Pending"
     };
-    
+
     const newOrder = await Order.create(finalOrderData);
-    
+
     // নতুন অর্ডার আসার পর অ্যাডমিন পোর্টাল আপডেট করা
     revalidatePath("/bemen-staff-portal/orders");
 
-    return { 
-      success: true, 
-      orderId: newOrder.orderId 
+    return {
+      success: true,
+      orderId: newOrder.orderId
     };
   } catch (error: any) {
     console.error("Order Creation Error:", error);
-    return { 
-      success: false, 
-      message: error.message || "Failed to place order." 
+    return {
+      success: false,
+      message: error.message || "Failed to place order."
     };
   }
 }
@@ -90,7 +90,6 @@ export async function deleteOrder(id: string) {
       return { success: false, message: "Order already deleted or not found" };
     }
 
-    // ডাটাবেস থেকে ডিলিট হওয়ার পর ক্যাশ ক্লিয়ার করা
     revalidatePath("/bemen-staff-portal/orders");
 
     return { success: true, message: "Order deleted successfully" };
@@ -101,3 +100,78 @@ export async function deleteOrder(id: string) {
     };
   }
 }
+
+export async function createManualOrder(orderData: any) {
+  try {
+    await connectDB();
+
+    // ইউনিক আইডি জেনারেট (BEMEN-XXXXXX)
+    const randomPart = crypto.randomBytes(3).toString("hex").toUpperCase();
+    const customOrderId = `BEMEN-${randomPart}`;
+
+    const finalOrderData = {
+      orderId: customOrderId,
+      customerName: orderData.customerName,
+      phoneNumber: orderData.phoneNumber,
+      altPhoneNumber: orderData.altPhoneNumber || "",
+      address: orderData.address,
+      city: orderData.city,
+      notes: orderData.notes || "",
+      items: orderData.items.map((item: any) => ({
+        _id: item._id,
+        productId: item.productId,
+        name: item.name,
+        price: Number(item.price),
+        quantity: Number(item.quantity),
+        size: item.size,
+        image: item.image || ""
+      })),
+      subtotal: Number(orderData.subtotal),
+      deliveryCharge: Number(orderData.deliveryCharge),
+      totalAmount: Number(orderData.totalAmount),
+      status: orderData.status || "Pending",
+      orderSource: "Manual"
+    };
+
+    const newOrder = await Order.create(finalOrderData);
+
+    revalidatePath("/bemen-staff-portal/orders");
+
+    return {
+      success: true,
+      orderId: newOrder.orderId
+    };
+  } catch (error: any) {
+    console.error("Manual Order Creation Error:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to place manual order."
+    };
+  }
+}
+
+export async function updateOrder(id: string, updateData: any) {
+  try {
+    await connectDB();
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { ...updateData },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return { success: false, message: "Order not found" };
+    }
+
+    revalidatePath("/bemen-staff-portal/orders");
+
+    return { success: true, message: "Order updated successfully" };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to update order",
+    };
+  }
+}
+
