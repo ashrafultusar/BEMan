@@ -40,7 +40,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0f172a] text-white">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0f172a] text-white print:hidden no-print">
         <div className="relative w-32 md:w-40 h-10 md:h-12">
           <Image
             src="/assets/logo.jpeg"
@@ -65,7 +65,7 @@ export default function Sidebar() {
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50
+          fixed inset-y-0 left-0 z-50 print:hidden no-print
           bg-[#0f172a] text-gray-400
           transition-all duration-300 border-r border-white/5
           ${isOpen ? "w-72" : "w-20"}
