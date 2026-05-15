@@ -16,62 +16,73 @@ interface HeroSliderClientProps {
   slides: Slide[];
 }
 
-const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
+const HeroSliderClient = ({ slides: originalSlides }: HeroSliderClientProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // ইনফিনিটি ইফেক্টের জন্য স্লাইডগুলোকে ট্রিপল করা হয়েছে
+  const slides = [...originalSlides, ...originalSlides, ...originalSlides];
+  const totalOriginal = originalSlides.length;
+
+  // শুরুতে স্লাইডারকে মাঝখানের সেটে সেট করা
+  useEffect(() => {
+    if (containerRef.current) {
+      const container = containerRef.current;
+      const slideWidth = container.scrollWidth / slides.length;
+      container.scrollLeft = slideWidth * totalOriginal;
+    }
+  }, [totalOriginal, slides.length]);
+
   const handleScroll = () => {
     if (!containerRef.current) return;
-    const container = containerRef.current;
+    const { scrollLeft, scrollWidth, offsetWidth } = containerRef.current;
+    const slideWidth = scrollWidth / slides.length;
 
-    // বর্তমান স্ক্রল পজিশন
-    const scrollLeft = container.scrollLeft;
-
-    // টোটাল স্ক্রল হওয়ার জায়গা থেকে প্রতি স্লাইডের প্রস্থ বের করা 
-    const slideWidth = container.scrollWidth / slides.length;
-
+    // বর্তমান একটিভ ইনডেক্স বের করা (ডটসের জন্য)
     const currentIndex = Math.round(scrollLeft / slideWidth);
-    setActiveIndex(currentIndex);
+    setActiveIndex(currentIndex % totalOriginal);
+
+    // ইনফিনিটি রিসেট লজিক: 
+    // যদি স্ক্রল একেবারে শুরুতে বা শেষে যায়, তবে অ্যানিমেশন ছাড়াই মাঝখানে জাম্প করবে
+    if (scrollLeft <= 5) {
+      containerRef.current.scrollLeft = slideWidth * totalOriginal;
+    } else if (scrollLeft >= scrollWidth - offsetWidth - 5) {
+      containerRef.current.scrollLeft = slideWidth * totalOriginal;
+    }
   };
 
-  const scrollToSlide = useCallback((index: number) => {
+  const scrollToSlide = (index: number) => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-
     const slideWidth = container.scrollWidth / slides.length;
+    
     container.scrollTo({
       left: slideWidth * index,
       behavior: "smooth",
     });
+  };
+
+  const slideNext = useCallback(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const slideWidth = container.scrollWidth / slides.length;
+    container.scrollBy({ left: slideWidth, behavior: "smooth" });
   }, [slides.length]);
 
   const slidePrev = () => {
-    setActiveIndex((prevIndex) => {
-      const nextIndex = prevIndex - 1 < 0 ? slides.length - 1 : prevIndex - 1;
-      scrollToSlide(nextIndex);
-      return nextIndex;
-    });
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const slideWidth = container.scrollWidth / slides.length;
+    container.scrollBy({ left: -slideWidth, behavior: "smooth" });
   };
 
-  const slideNext = () => {
-    setActiveIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1 >= slides.length ? 0 : prevIndex + 1;
-      scrollToSlide(nextIndex);
-      return nextIndex;
-    });
-  };
-
-  // Auto slide effect
+  // অটো-প্লে ইফেক্ট
   useEffect(() => {
-    if (isHovered || slides.length <= 1) return;
-
-    const timer = setInterval(() => {
-      slideNext();
-    }, 4000);
-
+    if (isHovered || totalOriginal <= 1) return;
+    const timer = setInterval(slideNext, 3000);
     return () => clearInterval(timer);
-  }, [isHovered, slides.length, scrollToSlide]);
+  }, [isHovered, totalOriginal, slideNext]);
 
   return (
     <section
@@ -85,14 +96,14 @@ const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
         onScroll={handleScroll}
       >
         {slides.map((slide, index) => (
-          <div key={index} className={styles.slide}>
+          <div key={`${slide.id}-${index}`} className={styles.slide}>
             <Link href={slide.ctaLink} className={styles.imageWrapper}>
               <Image
                 src={slide.image}
-                alt={`Promotion Banner ${index + 1}`}
+                alt={`Slide ${index}`}
                 fill
                 className={styles.slideImage}
-                priority={index < 3}
+                priority={index >= totalOriginal && index < totalOriginal * 2}
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             </Link>
@@ -100,33 +111,25 @@ const HeroSliderClient = ({ slides }: HeroSliderClientProps) => {
         ))}
       </div>
 
-      {/* Navigation Arrows */}
-      {slides.length > 1 && (
+      {/* নেভিগেশন বাটন */}
+      {totalOriginal > 1 && (
         <>
-          <button
-            className={`${styles.navArrow} ${styles.prevArrow}`}
-            onClick={slidePrev}
-            aria-label="Previous slide"
-          >
+          <button className={`${styles.navArrow} ${styles.prevArrow}`} onClick={slidePrev}>
             <ChevronLeft size={24} />
           </button>
-          <button
-            className={`${styles.navArrow} ${styles.nextArrow}`}
-            onClick={slideNext}
-            aria-label="Next slide"
-          >
+          <button className={`${styles.navArrow} ${styles.nextArrow}`} onClick={slideNext}>
             <ChevronRight size={24} />
           </button>
         </>
       )}
 
-      {/* Pagination */}
+      {/* ডটস / প্যাগিনেশন */}
       <div className={styles.pagination}>
-        {slides.map((_, index) => (
+        {originalSlides.map((_, index) => (
           <button
             key={index}
             className={`${styles.dot} ${index === activeIndex ? styles.activeDot : ""}`}
-            onClick={() => scrollToSlide(index)}
+            onClick={() => scrollToSlide(totalOriginal + index)}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}

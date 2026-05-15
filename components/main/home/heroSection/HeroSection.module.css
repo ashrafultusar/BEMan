@@ -1,45 +1,37 @@
 .sliderWrapper {
   position: relative;
   width: 100%;
-  /* Removed height: 100vh to let the images determine natural height */
   background: #000;
-  display: flex;
-  flex-direction: column;
-  /* Option: add padding bottom if you want dots below image, else they overlap */
-  padding-bottom: 40px;
+  overflow: hidden;
 }
 
 .sliderContainer {
   display: flex;
-  gap: 30px;
-  /* spaceBetween: 30 as per Swiper config */
+  gap: 20px; /* স্লাইডগুলোর মাঝের গ্যাপ */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  height: 100%;
-
-  /* Hide scrollbar */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  padding: 20px 0 60px 0;
+  cursor: grab;
 }
 
 .sliderContainer::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome/Safari */
+}
+
+.sliderContainer:active {
+  cursor: grabbing;
 }
 
 .slide {
-  /* slidesPerView: 3 */
-  /* Subtract gap size so they fit nicely */
-  flex: 0 0 calc(33.3333% - 20px);
+  flex: 0 0 calc(33.333% - 14px); /* একবারে ৩টি স্লাইড (ডেস্কটপ) */
   aspect-ratio: 1080 / 1350;
-  /* 4:5 image ratio ensures perfect full image view */
   scroll-snap-align: start;
   position: relative;
-  background: #444;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* Add padding or border here if needed */
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .imageWrapper {
@@ -49,64 +41,88 @@
   display: block;
 }
 
-/* 1080*1350 is a 4:5 image ratio. "home page image er hight thik rakhte"
-   height: 100% with object-fit: cover covers the card safely */
 .slideImage {
   object-fit: cover;
-  width: 100%;
-  height: 100%;
-  display: block;
+  transition: transform 0.5s ease;
 }
 
-/* Pagination Dots */
+.slide:hover .slideImage {
+  transform: scale(1.05);
+}
+
+/* নেভিগেশন অ্যারো */
+.navArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.navArrow:hover {
+  background: #fff;
+  color: #000;
+}
+
+.prevArrow { left: 20px; }
+.nextArrow { right: 20px; }
+
+/* প্যাগিনেশন */
 .pagination {
   position: absolute;
-  bottom: 25px;
-  /* Display at the bottom of the slider */
+  bottom: 20px;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   z-index: 10;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 0;
 }
 
-.dot:hover {
-  background: rgba(255, 255, 255, 0.8);
-}
-
 .activeDot {
   background: #fff;
-  transform: scale(1.2);
+  width: 24px;
+  border-radius: 10px;
 }
 
-/* Responsive constraints */
+/* Responsive */
 @media (max-width: 1024px) {
   .slide {
-    flex: 0 0 calc(50% - 15px);
-    /* 2 slides visible */
+    flex: 0 0 calc(50% - 10px); /* ট্যাবলেট ২টা স্লাইড */
   }
 }
 
 @media (max-width: 768px) {
   .slide {
-    gap: 0;
-    flex: 0 0 100%;
-    /* 1 slide visible */
+    flex: 0 0 85%; /* মোবাইলে ১টা পুরো এবং পরেরটার সামান্য অংশ */
+    margin-left: 7.5%;
   }
-
   .sliderContainer {
-    gap: 0;
+    gap: 10px;
+  }
+  .navArrow {
+    display: none; /* মোবাইলে অ্যারো অফ (সোয়াইপ সুবিধা বেশি) */
   }
 }
