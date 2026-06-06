@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { getShippingCharges } from "@/lib/data/shipping";
 
+export const revalidate = 60; // Enable ISR (cache page for 60 seconds)
+
 export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -22,14 +24,14 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
   // Related Products Filtering logic
   const relatedProducts = allProductsRes.success
     ? allProductsRes.data
-        .filter((p: any) => p.category === product.category && p._id.toString() !== product._id.toString())
-        .slice(0, 5)
+      .filter((p: any) => p.category === product.category && p._id.toString() !== product._id.toString())
+      .slice(0, 5)
     : [];
 
   return (
-    <ProductDetailsClient 
-      product={JSON.parse(JSON.stringify(product))} 
-      relatedProducts={JSON.parse(JSON.stringify(relatedProducts))} 
+    <ProductDetailsClient
+      product={JSON.parse(JSON.stringify(product))}
+      relatedProducts={JSON.parse(JSON.stringify(relatedProducts))}
       shippingRates={{
         insideDhaka: shippingRates?.insideDhaka || 70,
         outsideDhaka: shippingRates?.outsideDhaka || 150

@@ -5,8 +5,6 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { getCategories } from "@/lib/data/category";
 
-export const dynamic = 'force-dynamic';
-
 interface CategoryType {
   _id: string;
   name: string;
@@ -25,7 +23,7 @@ const FeaturedCategories = async () => {
   return (
     <section className="bg-white py-24 px-6">
       <div className="max-w-[1400px] mx-auto">
-        
+
         {/* Header - Matching About & Instagram sections */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
@@ -36,8 +34,8 @@ const FeaturedCategories = async () => {
               Shop by <span className="italic text-[#c59d5f]">Category</span>
             </h2>
           </div>
-          <Link 
-            href="/shop/all" 
+          <Link
+            href="/shop/all"
             className="text-[11px] font-bold uppercase tracking-widest text-black border-b border-black pb-1 hover:text-[#c59d5f] hover:border-[#c59d5f] transition-all duration-300 flex items-center gap-2 group"
           >
             View All Categories
@@ -55,11 +53,10 @@ const FeaturedCategories = async () => {
               <Link
                 key={cat._id}
                 href={`/shop/${slug}`}
-                className={`group relative overflow-hidden bg-[#f7f7f7] ${
-                  isFirst 
+                className={`group relative overflow-hidden bg-[#f7f7f7] ${isFirst
                     ? "md:col-span-2 md:row-span-2" // প্রথম ক্যাটাগরি বড় হবে
                     : "md:col-span-1 md:row-span-1"
-                }`}
+                  }`}
               >
                 {/* Image */}
                 <Image
@@ -70,7 +67,7 @@ const FeaturedCategories = async () => {
                   className="object-cover transition-transform duration-1000 group-hover:scale-110"
                   sizes={isFirst ? "50vw" : "25vw"}
                 />
-                
+
                 {/* Minimal Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
@@ -79,9 +76,8 @@ const FeaturedCategories = async () => {
                   <span className="text-[#c59d5f] text-[9px] font-bold uppercase tracking-[0.3em] mb-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                     New Collection
                   </span>
-                  <h3 className={`text-white font-serif tracking-wide transition-all duration-500 ${
-                    isFirst ? 'text-3xl' : 'text-xl'
-                  }`}>
+                  <h3 className={`text-white font-serif tracking-wide transition-all duration-500 ${isFirst ? 'text-3xl' : 'text-xl'
+                    }`}>
                     {cat.name}
                   </h3>
                 </div>
