@@ -2,13 +2,11 @@
 
 import { connectDB } from "@/db/dbConfig";
 import Product from "@/models/Product";
-import { unstable_noStore } from "next/cache";
 
 export async function getProducts(searchQuery?: string) {
-  unstable_noStore(); 
   try {
     await connectDB();
-    
+
     // Filter Object toiri kora
     let filter: any = {};
 
@@ -25,9 +23,9 @@ export async function getProducts(searchQuery?: string) {
     // Database theke filtered data fetch kora
     const products = await Product.find(filter).sort({ createdAt: -1 });
 
-    return { 
-      success: true, 
-      data: JSON.parse(JSON.stringify(products)) 
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(products))
     };
   } catch (error: any) {
     console.error("Get Products Error:", error);
@@ -40,16 +38,16 @@ export async function getProducts(searchQuery?: string) {
 export async function getProductById(id: string) {
   try {
     await connectDB();
-    
+
     const product = await Product.findById(id);
 
     if (!product) {
       return { success: false, message: "Product not found", data: null };
     }
 
-    return { 
-      success: true, 
-      data: JSON.parse(JSON.stringify(product)) 
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(product))
     };
   } catch (error: any) {
     console.error("Get Single Product Error:", error);

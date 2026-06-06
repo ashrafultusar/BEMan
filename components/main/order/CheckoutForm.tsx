@@ -9,6 +9,7 @@ import {
   User,
   MapPin,
   ShoppingBag,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orderAction";
 
 export default function CheckoutForm({ initialRates }: { initialRates: any }) {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, removeFromCart } = useCart();
   const [deliveryCharge, setDeliveryCharge] = useState(
     initialRates.insideDhaka
   );
@@ -172,11 +173,10 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className={`w-full border p-3 rounded-xl outline-none transition-all ${
-                    errors.name
+                  className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.name
                       ? "border-red-500 bg-red-50"
                       : "border-gray-200 focus:border-black"
-                  }`}
+                    }`}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
@@ -192,11 +192,10 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                     type="tel"
                     placeholder="017XXXXXXXX"
                     maxLength={11}
-                    className={`w-full border p-3 rounded-xl outline-none transition-all ${
-                      errors.phone
+                    className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.phone
                         ? "border-red-500 bg-red-50"
                         : "border-gray-200 focus:border-black"
-                    }`}
+                      }`}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -233,22 +232,20 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
               <input
                 type="text"
                 placeholder="Full Address (House, Road, Area)"
-                className={`w-full border p-3 rounded-xl outline-none transition-all ${
-                  errors.address
+                className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.address
                     ? "border-red-500"
                     : "border-gray-200 focus:border-black"
-                }`}
+                  }`}
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
               />
 
               <select
-                className={`w-full border p-3 rounded-xl bg-white outline-none transition-all ${
-                  errors.city
+                className={`w-full border p-3 rounded-xl bg-white outline-none transition-all ${errors.city
                     ? "border-red-500"
                     : "border-gray-200 focus:border-black"
-                }`}
+                  }`}
                 onChange={handleAreaChange}
                 value={formData.city}
               >
@@ -295,8 +292,15 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
               {cart.map((item) => (
                 <div
                   key={`${item._id}-${item.size}`}
-                  className="flex gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100"
+                  className="relative flex gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100 group"
                 >
+                  <button
+                    onClick={() => removeFromCart(item._id, item.size)}
+                    className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all z-10"
+                    title="Remove item"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                   <div className="relative w-16 h-20 shrink-0">
                     <Image
                       src={item.image}
@@ -305,7 +309,7 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                       className="object-cover rounded-lg"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 pr-6">
                     <h4 className="font-bold text-gray-800 text-sm line-clamp-1">
                       {item.name}
                     </h4>

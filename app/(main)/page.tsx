@@ -9,6 +9,8 @@ import ProductSkeleton from "@/components/main/ProductCard/ProductSkeleton";
 import { Suspense } from "react";
 import { getProducts } from "@/lib/data/product";
 
+export const revalidate = 60; // Enable ISR (cache page for 60 seconds)
+
 const Home = async () => {
   const result = await getProducts();
 
