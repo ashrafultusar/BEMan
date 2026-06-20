@@ -18,6 +18,7 @@ interface ProductProps {
     category: string;
     sizes?: string[]; // সাইজ অ্যারে
     isNew?: boolean;
+    stock?: number;
   };
 }
 
@@ -38,6 +39,8 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const discountPercentage = hasDiscount
     ? Math.round(((originalPrice - salePrice!) / originalPrice) * 100)
     : 0;
+
+  const isOutOfStock = product.stock === 0;
 
   // কার্টের জন্য ডাটা ফরম্যাট
   const formatProductForCart = (): CartItem => ({
@@ -68,12 +71,17 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
     <div className="group relative w-full bg-white transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden border border-gray-100">
       <div className="relative aspect-[4/5] overflow-hidden bg-[#fbfbfb] p-2">
         <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
-          {product.isNew && (
+          {isOutOfStock && (
+            <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-tighter shadow-sm w-fit">
+              OUT OF STOCK
+            </span>
+          )}
+          {!isOutOfStock && product.isNew && (
             <span className="bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-tighter shadow-sm w-fit">
               NEW
             </span>
           )}
-          {hasDiscount && (
+          {!isOutOfStock && hasDiscount && (
             <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter shadow-md w-fit animate-pulse">
               {discountPercentage}% OFF
             </span>
@@ -96,8 +104,12 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
 
         <div className="absolute inset-x-0 bottom-4 px-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
           <button
-            onClick={handleQuickAdd}
-            className="w-full cursor-pointer bg-white/95 backdrop-blur-sm text-black py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-[#c5a47e] hover:text-white transition-all shadow-xl border border-white/20"
+            onClick={isOutOfStock ? undefined : handleQuickAdd}
+            disabled={isOutOfStock}
+            className={`w-full bg-white/95 backdrop-blur-sm text-black py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-2 transition-all shadow-xl border border-white/20 ${isOutOfStock
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer hover:bg-[#c5a47e] hover:text-white"
+              }`}
           >
             <ShoppingCart size={15} /> QUICK ADD
           </button>
@@ -133,17 +145,29 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
         </div>
 
         <button
-          onClick={handleOrderNow}
-          className="w-full cursor-pointer relative group/btn h-11 overflow-hidden bg-gray-950 text-white rounded-lg flex items-center justify-center transition-all active:scale-95 shadow-md"
+          onClick={isOutOfStock ? undefined : handleOrderNow}
+          disabled={isOutOfStock}
+          className={`w-full relative group/btn h-11 overflow-hidden rounded-lg flex items-center justify-center transition-all shadow-md ${isOutOfStock
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gray-950 text-white cursor-pointer active:scale-95"
+            }`}
         >
-          <div className="absolute inset-0 w-0 bg-gradient-to-r from-[#c5a47e] to-[#e2c29d] transition-all duration-500 ease-out group-hover/btn:w-full" />
+          {!isOutOfStock && (
+            <div className="absolute inset-0 w-0 bg-gradient-to-r from-[#c5a47e] to-[#e2c29d] transition-all duration-500 ease-out group-hover/btn:w-full" />
+          )}
           <div className="relative z-10 flex items-center justify-center gap-2 font-bold text-[12px] tracking-wider uppercase">
-            <Zap size={14} fill="#c5a47e" className="text-[#c5a47e]" /> Order
-            Now
-            <ArrowRight
-              size={14}
-              className="ml-1 group-hover/btn:translate-x-1 transition-transform"
-            />
+            {isOutOfStock ? (
+              "Out of Stock"
+            ) : (
+              <>
+                <Zap size={14} fill="#c5a47e" className="text-[#c5a47e]" /> Order
+                Now
+                <ArrowRight
+                  size={14}
+                  className="ml-1 group-hover/btn:translate-x-1 transition-transform"
+                />
+              </>
+            )}
           </div>
         </button>
       </div>

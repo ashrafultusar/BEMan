@@ -296,7 +296,7 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                 >
                   <button
                     onClick={() => removeFromCart(item._id, item.size)}
-                    className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all z-10"
+                    className="absolute top-3 right-3 text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all z-10"
                     title="Remove item"
                   >
                     <Trash2 size={16} />
