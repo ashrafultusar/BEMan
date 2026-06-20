@@ -45,6 +45,7 @@ export default function ProductDetailsClient({
   const hasDiscount =
     salePrice !== null && salePrice > 0 && salePrice < originalPrice;
   const currentPrice = hasDiscount ? salePrice! : originalPrice;
+  const isOutOfStock = product.stock === 0;
 
   const handleAddToCart = () => {
     if (product.sizes?.length > 0 && !selectedSize) {
@@ -102,11 +103,10 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                 <div
                   key={index}
                   onClick={() => setActiveImage(img)}
-                  className={`relative w-16 h-20 md:w-20 md:h-24 cursor-pointer border-2 transition-all rounded-md overflow-hidden shrink-0 ${
-                    activeImage === img
+                  className={`relative w-16 h-20 md:w-20 md:h-24 cursor-pointer border-2 transition-all rounded-md overflow-hidden shrink-0 ${activeImage === img
                       ? "border-black"
                       : "border-gray-100 opacity-60"
-                  }`}
+                    }`}
                 >
                   <Image
                     src={img}
@@ -183,11 +183,10 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`h-12 w-16 flex items-center justify-center rounded-lg border-2 font-bold transition-all text-sm ${
-                        selectedSize === size
+                      className={`h-12 w-16 flex items-center justify-center rounded-lg border-2 font-bold transition-all text-sm ${selectedSize === size
                           ? "border-black bg-black text-white shadow-lg scale-105"
                           : "border-gray-100 text-gray-600 hover:border-gray-300"
-                      }`}
+                        }`}
                     >
                       {size}
                     </button>
@@ -197,19 +196,30 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
             )}
 
             <div className="flex flex-col gap-3 mb-8">
-              <button
-                onClick={handleOrderNow}
-                className="w-full bg-black hover:bg-gray-800 text-white font-bold py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl active:scale-95"
-              >
-                <Zap size={18} fill="#fbbf24" className="text-amber-400" /> Buy
-                It Now
-              </button>
-              <button
-                onClick={handleAddToCart}
-                className="w-full border-2 border-black hover:bg-black hover:text-white text-black font-bold py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95"
-              >
-                <ShoppingBag size={18} /> Add to Bag
-              </button>
+              {!isOutOfStock ? (
+                <>
+                  <button
+                    onClick={handleOrderNow}
+                    className="w-full bg-black hover:bg-gray-800 text-white font-bold py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl active:scale-95"
+                  >
+                    <Zap size={18} fill="#fbbf24" className="text-amber-400" /> Buy
+                    It Now
+                  </button>
+                  <button
+                    onClick={handleAddToCart}
+                    className="w-full border-2 border-black hover:bg-black hover:text-white text-black font-bold py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95"
+                  >
+                    <ShoppingBag size={18} /> Add to Bag
+                  </button>
+                </>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-gray-300 text-gray-500 font-bold py-5 rounded-xl text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 cursor-not-allowed shadow-inner"
+                >
+                  <span className="opacity-70">Not Available (Out of Stock)</span>
+                </button>
+              )}
             </div>
 
             <div className="mb-8">
@@ -235,9 +245,8 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                   Availability
                 </span>
                 <span
-                  className={`text-sm font-black ${
-                    product.stock > 0 ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`text-sm font-black ${product.stock > 0 ? "text-green-600" : "text-red-600"
+                    }`}
                 >
                   {product.stock > 0
                     ? `In Stock (${product.stock})`
@@ -334,9 +343,8 @@ const AccordionItem = ({ title, children, isOpen, onClick }: any) => (
       </div>
     </button>
     <div
-      className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
-        isOpen ? "grid-rows-[1fr] pb-8" : "grid-rows-[0fr]"
-      }`}
+      className={`grid transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "grid-rows-[1fr] pb-8" : "grid-rows-[0fr]"
+        }`}
     >
       <div className="min-h-0">{children}</div>
     </div>
