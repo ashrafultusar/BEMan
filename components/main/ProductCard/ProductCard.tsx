@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, ArrowRight, Zap } from "lucide-react";
 import { useCart, CartItem } from "@/context/CartContext";
+import { fbqAddToCart, generateEventId } from "@/lib/meta/pixel";
 
 interface ProductProps {
   product: {
@@ -41,13 +42,14 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
     : 0;
 
   const isOutOfStock = product.stock === 0;
+  const itemPrice = hasDiscount ? salePrice! : originalPrice;
 
   // কার্টের জন্য ডাটা ফরম্যাট
   const formatProductForCart = (): CartItem => ({
     _id: product._id,
     productId: product.productId || "N/A", // আইডি যোগ করা হলো
     name: product.name,
-    price: hasDiscount ? salePrice! : originalPrice,
+    price: itemPrice,
     image: imageSrc,
     category: product.category || "General",
     size: product.sizes?.[0] || "Standard", // কুইক অ্যাডের জন্য প্রথম সাইজটি নেওয়া হচ্ছে
@@ -57,13 +59,40 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(formatProductForCart());
+    const item = formatProductForCart();
+    addToCart(item);
+
+    // Track Meta Pixel AddToCart Event
+    const eventId = generateEventId();
+    fbqAddToCart({
+      content_name: item.name,
+      content_ids: [item.productId || item._id],
+      content_type: "product",
+      value: item.price,
+      currency: "BDT",
+      size: item.size,
+      quantity: 1,
+    }, eventId);
   };
 
   const handleOrderNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(formatProductForCart());
+    const item = formatProductForCart();
+    addToCart(item);
+
+    // Track Meta Pixel AddToCart Event
+    const eventId = generateEventId();
+    fbqAddToCart({
+      content_name: item.name,
+      content_ids: [item.productId || item._id],
+      content_type: "product",
+      value: item.price,
+      currency: "BDT",
+      size: item.size,
+      quantity: 1,
+    }, eventId);
+
     router.push("/checkout");
   };
 
@@ -107,8 +136,8 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
             onClick={isOutOfStock ? undefined : handleQuickAdd}
             disabled={isOutOfStock}
             className={`w-full bg-white/95 backdrop-blur-sm text-black py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-2 transition-all shadow-xl border border-white/20 ${isOutOfStock
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer hover:bg-[#c5a47e] hover:text-white"
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:bg-[#c5a47e] hover:text-white"
               }`}
           >
             <ShoppingCart size={15} /> QUICK ADD
@@ -148,8 +177,8 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           onClick={isOutOfStock ? undefined : handleOrderNow}
           disabled={isOutOfStock}
           className={`w-full relative group/btn h-11 overflow-hidden rounded-lg flex items-center justify-center transition-all shadow-md ${isOutOfStock
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-gray-950 text-white cursor-pointer active:scale-95"
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-gray-950 text-white cursor-pointer active:scale-95"
             }`}
         >
           {!isOutOfStock && (
