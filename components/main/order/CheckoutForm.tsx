@@ -17,6 +17,7 @@ import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orderAction";
+import { fbqInitiateCheckout, fbqPurchase, generateEventId } from "@/lib/meta/pixel";
 
 export default function CheckoutForm({ initialRates }: { initialRates: any }) {
   const { cart, clearCart, removeFromCart } = useCart();
@@ -43,15 +44,26 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
     city: false,
   });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
   const total = subtotal + deliveryCharge;
+
+  useEffect(() => {
+    setMounted(true);
+    if (cart.length > 0) {
+      const eventId = generateEventId();
+      const contentIds = cart.map((i) => String(i.productId || i._id));
+      fbqInitiateCheckout({
+        content_ids: contentIds,
+        content_type: "product",
+        value: total,
+        currency: "BDT",
+        num_items: cart.reduce((acc, i) => acc + i.quantity, 0),
+      }, eventId);
+    }
+  }, []);
 
   const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCity = e.target.value;
@@ -86,7 +98,11 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
 
     setLoading(true);
 
+    // Generate unique eventId for Deduplication between Browser Pixel & Server CAPI
+    const eventId = generateEventId();
+
     const orderPayload = {
+      eventId, // Sent to server CAPI for exact deduplication match
       customerName: formData.name,
       phoneNumber: formData.phone,
       altPhoneNumber: formData.altPhone,
@@ -110,6 +126,27 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
     try {
       const result = await createOrder(orderPayload);
       if (result.success) {
+        // Track Client-Side Browser Purchase Event with exact same eventId & Advanced Matching data
+        const contentIds = cart.map((i) => String(i.productId || i._id));
+        const numItems = cart.reduce((acc, i) => acc + i.quantity, 0);
+
+        fbqPurchase(
+          {
+            content_ids: contentIds,
+            content_type: "product",
+            value: total,
+            currency: "BDT",
+            order_id: result.orderId,
+            num_items: numItems,
+          },
+          eventId,
+          {
+            firstName: formData.name,
+            phone: formData.phone,
+            city: formData.city,
+          }
+        );
+
         toast.success("Order Placed Successfully!");
         clearCart();
         router.push(`/order-success/${result.orderId}`);
@@ -174,8 +211,8 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                   type="text"
                   placeholder="Your Name"
                   className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.name
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-200 focus:border-black"
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-200 focus:border-black"
                     }`}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
@@ -193,8 +230,8 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                     placeholder="017XXXXXXXX"
                     maxLength={11}
                     className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.phone
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-black"
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 focus:border-black"
                       }`}
                     onChange={(e) =>
                       setFormData({
@@ -233,8 +270,8 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
                 type="text"
                 placeholder="Full Address (House, Road, Area)"
                 className={`w-full border p-3 rounded-xl outline-none transition-all ${errors.address
-                    ? "border-red-500"
-                    : "border-gray-200 focus:border-black"
+                  ? "border-red-500"
+                  : "border-gray-200 focus:border-black"
                   }`}
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
@@ -243,8 +280,8 @@ export default function CheckoutForm({ initialRates }: { initialRates: any }) {
 
               <select
                 className={`w-full border p-3 rounded-xl bg-white outline-none transition-all ${errors.city
-                    ? "border-red-500"
-                    : "border-gray-200 focus:border-black"
+                  ? "border-red-500"
+                  : "border-gray-200 focus:border-black"
                   }`}
                 onChange={handleAreaChange}
                 value={formData.city}

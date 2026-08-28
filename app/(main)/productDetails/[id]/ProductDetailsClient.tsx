@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ProductCard from "@/components/main/ProductCard/ProductCard";
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import toast, { Toaster } from "react-hot-toast";
+import { fbqViewContent, fbqAddToCart, fbqContact, generateEventId } from "@/lib/meta/pixel";
 
 interface Props {
   product: any;
@@ -47,6 +48,21 @@ export default function ProductDetailsClient({
   const currentPrice = hasDiscount ? salePrice! : originalPrice;
   const isOutOfStock = product.stock === 0;
 
+  // Track Meta Pixel ViewContent Event on mount
+  useEffect(() => {
+    if (product) {
+      const eventId = generateEventId();
+      fbqViewContent({
+        content_name: product.name,
+        content_ids: [product.productId || product._id],
+        content_type: "product",
+        value: currentPrice,
+        currency: "BDT",
+        category: product.category || "Apparel",
+      }, eventId);
+    }
+  }, [product, currentPrice]);
+
   const handleAddToCart = () => {
     if (product.sizes?.length > 0 && !selectedSize) {
       toast.error("Please select a size first!");
@@ -63,6 +79,19 @@ export default function ProductDetailsClient({
       size: selectedSize,
       quantity: 1,
     });
+
+    // Track Meta Pixel AddToCart Event
+    const eventId = generateEventId();
+    fbqAddToCart({
+      content_name: product.name,
+      content_ids: [product.productId || product._id],
+      content_type: "product",
+      value: currentPrice,
+      currency: "BDT",
+      size: selectedSize,
+      quantity: 1,
+    }, eventId);
+
     toast.success(`${product.name} (${selectedSize}) added!`, {
       position: "top-center",
     });
@@ -104,8 +133,8 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                   key={index}
                   onClick={() => setActiveImage(img)}
                   className={`relative w-16 h-20 md:w-20 md:h-24 cursor-pointer border-2 transition-all rounded-md overflow-hidden shrink-0 ${activeImage === img
-                      ? "border-black"
-                      : "border-gray-100 opacity-60"
+                    ? "border-black"
+                    : "border-gray-100 opacity-60"
                     }`}
                 >
                   <Image
@@ -184,8 +213,8 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={`h-12 w-16 flex items-center justify-center rounded-lg border-2 font-bold transition-all text-sm ${selectedSize === size
-                          ? "border-black bg-black text-white shadow-lg scale-105"
-                          : "border-gray-100 text-gray-600 hover:border-gray-300"
+                        ? "border-black bg-black text-white shadow-lg scale-105"
+                        : "border-gray-100 text-gray-600 hover:border-gray-300"
                         }`}
                     >
                       {size}
@@ -229,6 +258,14 @@ Link: ${typeof window !== "undefined" ? window.location.href : ""}`;
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  fbqContact({
+                    content_name: product.name,
+                    content_id: product.productId || product._id,
+                    value: currentPrice,
+                    currency: "BDT",
+                  }, generateEventId());
+                }}
                 className="bg-[#25D366] text-white text-center py-4 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1da851] transition-all shadow-md active:scale-95"
               >
                 Order via WhatsApp
